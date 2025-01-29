@@ -36,5 +36,5 @@ class SFVis:
             print(f"Error collecting data from {db_name}: {str(e)}")
             return None
     
-    def add_(self, param_name, param_value, db_name=None):
+    def add_parameters(self, param_name, param_value, db_name=None):
         

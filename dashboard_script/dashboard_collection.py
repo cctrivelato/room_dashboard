@@ -25,9 +25,8 @@ def calculating(objects):
 def main():
     for i in range(15):
         sfvis[i] = recording_data(SFvis, 15)
-
+        
     calculating(sfvis)
-
 
 if __name__ == "__main__":
     main()
