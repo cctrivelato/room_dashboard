@@ -1,6 +1,7 @@
 """
 Loop working with gathering of data from database, analyzing, calculating, 
 and updating collective data.
+
 Developed by Caique Trivelato
 Version 1.0 
 Date: 01/29/2025
@@ -18,7 +19,7 @@ def recording_data(sfvis, working_systems):
         time.sleep(1)
 
 def calculating(objects):
-    
+
 
 
 def main():
