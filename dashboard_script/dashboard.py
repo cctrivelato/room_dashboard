@@ -7,14 +7,22 @@ Version 1.0
 Date: 01/29/2025
 """
 
+from configparser import ConfigParser
 from multi_table_service import MultiTableService
 
-db_config = {
-        'host': 'localhost',
-        'user': 'your_username',
-        'password': 'your_password',
-        'database': 'your_database_name'
-    }
+def read_db_config(filename='dbconfig.ini', section='database'):
+    parser = ConfigParser()
+    parser.read(filename)
+    db = {}
+    if parser.has_section(section):
+        items = parser.items(section)
+        for item in items:
+            db[item[0]] = item[1]
+    else:
+        raise Exception(f'Section {section} not found in {filename}')
+    return db
+
+db_config = read_db_config()
     
 service = MultiTableService(
         db_config=db_config,
