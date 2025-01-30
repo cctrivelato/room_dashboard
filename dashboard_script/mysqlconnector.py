@@ -6,6 +6,8 @@ Version 1.0
 Date: 01/29/2025
 """
 
+import mysql.connector
+from typing import Dict, Any
 
 class MySQLConnector:
     """Handles connection to the MySQL database"""
