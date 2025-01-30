@@ -10,7 +10,7 @@ Date: 01/29/2025
 from configparser import ConfigParser
 from multi_table_service import MultiTableService
 
-def read_db_config(filename='C:/Users/administrator/room_dashboard/dashboard_script/dbconfig.ini', section='database'):
+def read_db_config(filename='dbconfig.ini', section='database'):
     parser = ConfigParser()
     parser.read(filename)
     db = {}
@@ -26,7 +26,7 @@ db_config = read_db_config()
     
 service = MultiTableService(
         db_config=db_config,
-        update_url='http://localhost/data_handler.php'
+        update_url='http://192.168.10.38:8000/data_handler.php'
     )
 
 service.run()
