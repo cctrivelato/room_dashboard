@@ -10,7 +10,7 @@ Date: 01/29/2025
 from configparser import ConfigParser
 from multi_table_service import MultiTableService
 
-def read_db_config(filename='dbconfig.ini', section='database'):
+def read_db_config(filename='C:/Users/ctrivelato/Documents/GitHub/room_dashboard/dashboard_script/dbconfig.ini', section='database'):
     parser = ConfigParser()
     parser.read(filename)
     db = {}
