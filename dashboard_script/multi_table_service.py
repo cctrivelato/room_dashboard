@@ -68,9 +68,10 @@ class MultiTableService:
                     ORDER BY timestamp_column DESC
                     LIMIT 1;'
                 ''',
-                'old_status': f' SELECT Old_Status
+                'old_status': f'''
+                     SELECT Old_Status
                     FROM test.{table_name} ORDER BY timestamp_column DESC
-                    LIMIT 1;',
+                    LIMIT 1;''',
                 'new_status': f'''
                     SELECT New_Status
                     FROM test.{table_name}
