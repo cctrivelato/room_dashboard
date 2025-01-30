@@ -147,7 +147,7 @@ class MultiTableService:
         except Exception as e:
             print(f"Error publishing metrics: {str(e)}")
     
-    def run(self, db_config, interval: int = 60):
+    def run(self, db_config, interval: int = 1):
         """Run the service with specified update interval"""
         print(f"Starting multi-table monitoring service with {interval} second interval...")
         self.setup_metrics_containers()
