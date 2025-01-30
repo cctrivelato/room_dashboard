@@ -56,54 +56,50 @@ class MultiTableService:
             
             # Collection of different metrics for the table
             metrics_queries = {
-                'row_count': f'SELECT COUNT(*) FROM {table_name}',
-                'avg_daily_inserts': f'''
-                    SELECT COUNT(*) / DATEDIFF(NOW(), MIN(created_at))
-                    FROM {table_name}
-                    WHERE created_at IS NOT NULL
+                'workstation': f'''
+                    SELECT Workstation_Camera
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;
                 ''',
-                'last_hour_changes': f'''
-                    SELECT COUNT(*)
-                    FROM {table_name}
-                    WHERE updated_at >= NOW() - INTERVAL 1 HOUR
+                'vision_system': f'''
+                    SELECT Vision_System
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;'
                 ''',
-                'data_size': f'''
-                    SELECT 
-                        ROUND(((data_length + index_length) / 1024 / 1024), 2)
-                    FROM information_schema.TABLES
-                    WHERE table_schema = DATABASE()
-                    AND table_name = '{table_name}'
+                'old_status': f' SELECT Old_Status
+                    FROM test.{table_name} ORDER BY timestamp_column DESC
+                    LIMIT 1;',
+                'new_status': f'''
+                    SELECT New_Status
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;
                 ''',
-                'max_id': f'SELECT MAX(id) FROM {table_name}',
-                'null_count': f'''
-                    SELECT COUNT(*)
-                    FROM {table_name}
-                    WHERE id IS NULL
+                'people_count': f'''
+                    SELECT People_Count
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;
                 ''',
-                'duplicate_count': f'''
-                    SELECT COUNT(*) - COUNT(DISTINCT id)
-                    FROM {table_name}
+                'frame_rate': f'''
+                    SELECT Frame_Rate
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;
                 ''',
-                'avg_text_length': f'''
-                    SELECT AVG(LENGTH(CAST(description AS CHAR)))
-                    FROM information_schema.COLUMNS
-                    WHERE table_schema = DATABASE()
-                    AND table_name = '{table_name}'
-                    AND data_type IN ('varchar', 'text', 'char')
+                'presence_change_total': f'''
+                    SELECT Presence_Change_Total
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;'
                 ''',
-                'index_size': f'''
-                    SELECT 
-                        ROUND((index_length / 1024 / 1024), 2)
-                    FROM information_schema.TABLES
-                    WHERE table_schema = DATABASE()
-                    AND table_name = '{table_name}'
-                ''',
-                'fragmentation': f'''
-                    SELECT 
-                        ROUND(data_free / 1024 / 1024, 2)
-                    FROM information_schema.TABLES
-                    WHERE table_schema = DATABASE()
-                    AND table_name = '{table_name}'
+                'presence_change_rate': f'''
+                    SELECT Presence_Change_Rate
+                    FROM test.{table_name}
+                    ORDER BY timestamp_column DESC
+                    LIMIT 1;'
                 '''
             }
             
