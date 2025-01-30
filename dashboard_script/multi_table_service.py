@@ -58,47 +58,47 @@ class MultiTableService:
             metrics_queries = {
                 'workstation': f'''
                     SELECT Workstation_Camera
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;
                 ''',
                 'vision_system': f'''
                     SELECT Vision_System
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;'
                 ''',
                 'old_status': f'''
                      SELECT Old_Status
-                    FROM test.{table_name} ORDER BY timestamp_column DESC
+                    FROM {table_name} ORDER BY timestamp_column DESC
                     LIMIT 1;''',
                 'new_status': f'''
                     SELECT New_Status
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;
                 ''',
                 'people_count': f'''
                     SELECT People_Count
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;
                 ''',
                 'frame_rate': f'''
                     SELECT Frame_Rate
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;
                 ''',
                 'presence_change_total': f'''
                     SELECT Presence_Change_Total
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;'
                 ''',
                 'presence_change_rate': f'''
                     SELECT Presence_Change_Rate
-                    FROM test.{table_name}
+                    FROM {table_name}
                     ORDER BY timestamp_column DESC
                     LIMIT 1;'
                 '''
