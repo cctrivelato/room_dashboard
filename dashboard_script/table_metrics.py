@@ -14,12 +14,6 @@ class TableMetrics:
     def __init__(self, table_name: str):
         self.table_name = table_name
         self.metrics: List[DataPoint] = []
-        
-    def add_metric(self, data_point: DataPoint):
-        self.metrics.append(data_point)
-        # Keep only last 10 data points
-        if len(self.metrics) > 10:
-            self.metrics.pop(0)
     
     def to_dict(self) -> Dict[str, Any]:
         return {

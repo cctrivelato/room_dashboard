@@ -26,7 +26,8 @@ db_config = read_db_config()
     
 service = MultiTableService(
         db_config=db_config,
-        update_url='http://192.168.10.38:8000/data_handler.php'
+        update_url='http://localhost/index.php'
     )
-
-service.run()
+    
+# Start the service with 10-second intervals
+service.run(10)

@@ -21,6 +21,11 @@ class MySQLConnector:
             raise
     
     def get_connection(self):
-        if not self.connection.is_connected():
-            self.connection.reconnect()
-        return self.connection
+        try:
+            if not self.connection.is_connected():
+                self.connection.reconnect()
+            return self.connection
+        except mysql.connector.Error as e:
+            print(f"Database reconnection failed: {e}")
+            self.connection = mysql.connector.connect(**self.db_config)
+            return self.connection

@@ -6,7 +6,7 @@ Date: 01/29/2025
 """
 
 import datetime
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 class DataPoint:
     """Represents a single data point from a table"""
