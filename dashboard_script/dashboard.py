@@ -30,4 +30,4 @@ service = MultiTableService(
     )
     
 # Start the service with 10-second intervals
-service.run(10)
+service.run(db_config, 10)
