@@ -22,16 +22,16 @@ class DataTable:
         
         if result:
             self.data_points = {
-                'Timestamp': result['Timestamp'],
-                'Workstation': result['Workstation_Camera'],
-                'Vision System': result['Vision_System'],
-                'Old Status': result['Old_Status'],
-                'Booth Last Occupied for': result['Period_Status_Last'],
-                'New Status': result['New_Status'],
-                'People Present in Camera': result['People_Count'],
-                'Frame Rate': result['Frame_Rate'],
-                'Change of Presence - Total': result['Presence_Change_Total'],
-                'Change of Presence p/Minute': result['Presence_Change_Rate']
+                'point1': result['Timestamp'],
+                'point2': result['Workstation_Camera'],
+                'point3': result['Vision_System'],
+                'point4': result['Old_Status'],
+                'point5': result['Period_Status_Last'],
+                'point6': result['New_Status'],
+                'point7': result['People_Count'],
+                'point8': result['Frame_Rate'],
+                'point9': result['Presence_Change_Total'],
+                'point10': result['Presence_Change_Rate']
             }
         
         cursor.close()
@@ -39,18 +39,26 @@ class DataTable:
 
 class DatabaseManager:
     def __init__(self, host, user, password, database):
-        self.connection = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database
-        )
-        self.tables = [
-            'sfvis_cam01', 'sfvis_cam02', 'sfvis_cam03', 'sfvis_cam04', 'sfvis_cam05',
-            'sfvis_cam06', 'sfvis_cam07', 'sfvis_cam08', 'sfvis_cam09', 'sfvis_cam10',
-            'sfvis_cam11', 'sfvis_cam12', 'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
-        ]
-        self.data_collections = {}
+        try:
+            self.connection = mysql.connector.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=database
+            )
+            self.tables = [
+                'sfvis_cam01', 'sfvis_cam02', 'sfvis_cam03', 'sfvis_cam04', 'sfvis_cam05',
+                'sfvis_cam06', 'sfvis_cam07', 'sfvis_cam08', 'sfvis_cam09', 'sfvis_cam10',
+                'sfvis_cam11', 'sfvis_cam12', 'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
+            ]
+            self.data_collections = {}
+
+        except mysql.connector.Error as err:
+            raise Exception(f"Failed to connect: {err}")
+
+    def __del__(self):
+        if hasattr(self, 'connection') and self.connection.is_connected():
+            self.connection.close()
 
     def collect_data(self):
         """Collect data from all 15 tables"""
@@ -74,11 +82,10 @@ def main():
         database='test'
     )
     
-    # Collect and save data
-    collected_data = db_manager.collect_data()
-    print(collected_data.sfvis_cam01('Workstation'))
-
-    db_manager.save_to_json()
+    while True:
+        # Collect and save data
+        collected_data = db_manager.collect_data()
+        db_manager.save_to_json()
 
 if __name__ == '__main__':
     main()
