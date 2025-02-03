@@ -39,18 +39,26 @@ class DataTable:
 
 class DatabaseManager:
     def __init__(self, host, user, password, database):
-        self.connection = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database
-        )
-        self.tables = [
-            'sfvis_cam01', 'sfvis_cam02', 'sfvis_cam03', 'sfvis_cam04', 'sfvis_cam05',
-            'sfvis_cam06', 'sfvis_cam07', 'sfvis_cam08', 'sfvis_cam09', 'sfvis_cam10',
-            'sfvis_cam11', 'sfvis_cam12', 'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
-        ]
-        self.data_collections = {}
+        try:
+            self.connection = mysql.connector.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=database
+            )
+            self.tables = [
+                'sfvis_cam01', 'sfvis_cam02', 'sfvis_cam03', 'sfvis_cam04', 'sfvis_cam05',
+                'sfvis_cam06', 'sfvis_cam07', 'sfvis_cam08', 'sfvis_cam09', 'sfvis_cam10',
+                'sfvis_cam11', 'sfvis_cam12', 'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
+            ]
+            self.data_collections = {}
+
+        except mysql.connector.Error as err:
+            raise Exception(f"Failed to connect: {err}")
+
+    def __del__(self):
+        if hasattr(self, 'connection') and self.connection.is_connected():
+            self.connection.close()
 
     def collect_data(self):
         """Collect data from all 15 tables"""
@@ -74,9 +82,10 @@ def main():
         database='test'
     )
     
-    # Collect and save data
-    collected_data = db_manager.collect_data()
-    db_manager.save_to_json()
+    while True:
+        # Collect and save data
+        collected_data = db_manager.collect_data()
+        db_manager.save_to_json()
 
 if __name__ == '__main__':
     main()
