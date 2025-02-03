@@ -84,7 +84,7 @@ def main():
     
     while True:
         # Collect and save data
-        collected_data = db_manager.collect_data()
+        db_manager.collect_data()
         db_manager.save_to_json()
 
 if __name__ == '__main__':
