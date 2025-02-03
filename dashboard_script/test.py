@@ -22,16 +22,16 @@ class DataTable:
         
         if result:
             self.data_points = {
-                'point1': result['Timestamp'],
-                'point2': result['Workstation_Camera'],
-                'point3': result['Vision_System'],
-                'point4': result['Old_Status'],
-                'point5': result['Period_Status_Last'],
-                'point6': result['New_Status'],
-                'point7': result['People_Count'],
-                'point8': result['Frame_Rate'],
-                'point9': result['Presence_Change_Total'],
-                'point10': result['Presence_Change_Rate']
+                'Timestamp': result['Timestamp'],
+                'Workstation': result['Workstation_Camera'],
+                'Vision System': result['Vision_System'],
+                'Old Status': result['Old_Status'],
+                'Booth Last Occupied for': result['Period_Status_Last'],
+                'New Status': result['New_Status'],
+                'People Present in Camera': result['People_Count'],
+                'Frame Rate': result['Frame_Rate'],
+                'Change of Presence - Total': result['Presence_Change_Total'],
+                'Change of Presence p/Minute': result['Presence_Change_Rate']
             }
         
         cursor.close()
@@ -76,6 +76,8 @@ def main():
     
     # Collect and save data
     collected_data = db_manager.collect_data()
+    print(collected_data.sfvis_cam01('Workstation'))
+
     db_manager.save_to_json()
 
 if __name__ == '__main__':
