@@ -60,7 +60,7 @@ class DatabaseManager:
         
         return self.data_collections
 
-    def save_to_json(self, filename='/var/www/html/database_data.json'):
+    def save_to_json(self, filename='C:\xampp\htdocs\database_data.json'):
         """Save collected data to JSON file"""
         with open(filename, 'w') as f:
             json.dump(self.data_collections, f, indent=4)
