@@ -1,91 +1,42 @@
 import mysql.connector
-import json
+from flask import Flask, jsonify
+from configparser import ConfigParser
 
-class DataTable:
-    def __init__(self, connection, table_name):
-        self.connection = connection
-        self.table_name = table_name
-        self.data_points = {}
+app = Flask(__name__)
 
-    def retrieve_data_points(self):
-        """Retrieve 10 specific data points from the table"""
-        cursor = self.connection.cursor(dictionary=True)
-        query = f"""
-        SELECT 
-            Timestamp, Workstation_Camera, Vision_System, Old_Status, Period_Status_Last,
-            New_Status, People_Count, Frame_Rate, Presence_Change_Total, Presence_Change_Rate
-        FROM {self.table_name}
-        LIMIT 1
-        """
-        cursor.execute(query)
-        result = cursor.fetchone()
+def read_db_config(filename='dbconfig.ini', section='database'):
+    parser = ConfigParser()
+    parser.read(filename)
+    db = {}
+    if parser.has_section(section):
+        items = parser.items(section)
+        for item in items:
+            db[item[0]] = item[1]
+    else:
+        raise Exception(f'Section {section} not found in {filename}')
+    return db
+
+db_config = read_db_config()
+
+@app.route('/data', methods=['GET'])
+def get_data():
+    cursor = db_config(dictionary=True)
+
+    tables = [
+            'sfvis01', 'sfvis02', 'sfvis03',
+            'sfvis04', 'sfvis05', 'sfvis06',
+            'sfvis07', 'sfvis08', 'sfvis09',
+            'sfvis10', 'sfvis11', 'sfvis12',
+            'sfvis13', 'sfvis14', 'sfvis15'
+        ]
         
-        if result:
-            self.data_points = {
-                'point1': result['Timestamp'],
-                'point2': result['Workstation_Camera'],
-                'point3': result['Vision_System'],
-                'point4': result['Old_Status'],
-                'point5': result['Period_Status_Last'],
-                'point6': result['New_Status'],
-                'point7': result['People_Count'],
-                'point8': result['Frame_Rate'],
-                'point9': result['Presence_Change_Total'],
-                'point10': result['Presence_Change_Rate']
-            }
-        
-        cursor.close()
-        return self.data_points
+    result = {}
 
-class DatabaseManager:
-    def __init__(self, host, user, password, database):
-        try:
-            self.connection = mysql.connector.connect(
-                host=host,
-                user=user,
-                password=password,
-                database=database
-            )
-            self.tables = [
-                'sfvis_cam01', 'sfvis_cam02', 'sfvis_cam03', 'sfvis_cam04', 'sfvis_cam05',
-                'sfvis_cam06', 'sfvis_cam07', 'sfvis_cam08', 'sfvis_cam09', 'sfvis_cam10',
-                'sfvis_cam11', 'sfvis_cam12', 'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
-            ]
-            self.data_collections = {}
+    for table in tables:
+        cursor.execute(f"SELECT Timestamp, Workstation_Camera, Vision_System, Old_Status, New_Status, People_Count, Frame_Rate, Presence_Change_Total, Presence_Change_Rate FROM {table} ORDER BY Timestamp DESC LIMIT 1")
+        result[table] = cursor.fetchall()
 
-        except mysql.connector.Error as err:
-            raise Exception(f"Failed to connect: {err}")
-
-    def __del__(self):
-        if hasattr(self, 'connection') and self.connection.is_connected():
-            self.connection.close()
-
-    def collect_data(self):
-        """Collect data from all 15 tables"""
-        for table_name in self.tables:
-            table_obj = DataTable(self.connection, table_name)
-            self.data_collections[table_name] = table_obj.retrieve_data_points()
-        
-        return self.data_collections
-
-    def save_to_json(self, filename='C:/xampp/htdocs/database_data.json'):
-        """Save collected data to JSON file"""
-        with open(filename, 'w') as f:
-            json.dump(self.data_collections, f, indent=4)
-
-def main():
-    # Database connection parameters - replace with your actual credentials
-    db_manager = DatabaseManager(
-        host='sfmysql02.sf.local', 
-        user='admin', 
-        password='CEll6505563!', 
-        database='test'
-    )
-    
-    while True:
-        # Collect and save data
-        db_manager.collect_data()
-        db_manager.save_to_json()
+    return jsonify(result)    
 
 if __name__ == '__main__':
-    main()
+    app.run(host = '0.0.0.0', debug=True)
