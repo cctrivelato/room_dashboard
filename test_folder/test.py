@@ -4,7 +4,7 @@ import mysql.connector
 
 app = Flask(__name__)
 
-def read_db_config(filename='dbconfig.ini', section='database'):
+def read_db_config(filename='dbconfig.ini', section = 'database'):
     parser = ConfigParser()
     parser.read(filename)
     db = {}
