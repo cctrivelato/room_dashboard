@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Display</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data from Tables</h1>
+    <div id="tables-container"></div>
+
+    <script>
+        // Fetch JSON data from Flask backend
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('tables-container');
+                for (let table in data) {
+                    const tableData = data[table];
+                    const tableElement = document.createElement('table');
+                    const tableHeader = document.createElement('thead');
+                    const tableBody = document.createElement('tbody');
+
+                    // Create table header
+                    let headerRow = document.createElement('tr');
+                    headerRow.innerHTML = `<th>Timestamp</th><th>Workstation_Camera</th><th>Vision_System</th><th>Old_Status</th><th>New_Status</th><th>People_Count</th><th>Frame_Rate</th><th>Presence_Change_Total</th><th>Presence_Change_Rate</th>`;
+                    tableHeader.appendChild(headerRow);
+
+                    // Populate table rows with data
+                    tableData.forEach(row => {
+                        let rowElement = document.createElement('tr');
+                        rowElement.innerHTML = `<td>${row.Timestamp}</td><td>${row.Workstation_Camera}</td><td>${row.Vision_System}</td><td>${row.Old_Status}</td><td>${row.New_Status}</td><td>${row.People_Count}</td><td>${row.Frame_Rate}</td><td>${row.Presence_Change_Total}</td><td>${row.Presence_Change_Rate}</td></tr>`;
+                        tableBody.appendChild(rowElement);
+                    });
+
+                    // Append header and body to the table
+                    tableElement.appendChild(tableHeader);
+                    tableElement.appendChild(tableBody);
+
+                    // Add a title for each table
+                    const tableTitle = document.createElement('h2');
+                    tableTitle.innerText = table;
+                    container.appendChild(tableTitle);
+
+                    // Append the table to the container
+                    container.appendChild(tableElement);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    </script>
+</body>
+</html>
