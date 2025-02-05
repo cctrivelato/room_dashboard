@@ -7,19 +7,27 @@
         async function fetchData(){
             try{
                 const response = await fecth('http://192.168.70.20:5000/data');
-                const data = await response.json();
+                const jsonData = await response.json();
                 
+                displayData(jsonData);
             } catch (error){
                 console.error("Error fetching data:", error);
             }
         }
 
         function displaData(data){
-            let output = "<table border='1'><tr><th>ID</th><th>Value</th><th>Timestamp</th></tr>";
-            data.forEach(item => {
-                output += `<tr><td>${item.id}</td><td>${item.value}</td><td>${item.timestamp}</td></tr>`;
-            });
-            output += "</table>";
+            let output = "";
+
+            for (let table in data) {
+                output += '<h3>${table}</h3>'
+                output += "<table border='1'><tr><th>Timestamp</th><th>Workstation</th><th>Vison System</th><th>Old Status</th><th>NewStatus</th><th>People Present in Booth</th><th>Frame Rate</th><th>Presence Change Total</th><th>Presence Change Rate</th></tr>";
+                
+                data[table].forEach(item => {
+                output += `<tr><td>${item.Timestamp}</td><td>${item.Workstation_Camera}</td><td>${item.Vision_System}</td><td>${item.Old_Status}</td><td>${item.New_Status}</td><td>${item.People_Count}</td><td>${item.Frame_Rate}</td><td>${item.Presence_Change_Total}</td><td>${item.Presence_Change_Rate}</td></tr>`;
+                });
+
+                output += "</table>";
+            }
             document.getElementById("data-container").innerHTML = output;
         }
 
