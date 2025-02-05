@@ -1,6 +1,6 @@
-import mysql.connector
 from flask import Flask, jsonify
 from configparser import ConfigParser
+import mysql.connector
 
 app = Flask(__name__)
 
