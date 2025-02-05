@@ -20,7 +20,8 @@ db_config = read_db_config()
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    cursor = db_config(dictionary=True)
+    db = mysql.connector.connect(**db_config)
+    cursor = db.cursor(dictionary=True)
 
     tables = [
             'sfvis01', 'sfvis02', 'sfvis03',
