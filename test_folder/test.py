@@ -1,6 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from configparser import ConfigParser
-import mysql.connector
+import pymysql
 
 app = Flask(__name__)
 
@@ -18,17 +18,21 @@ def read_db_config(filename='dbconfig.ini', section = 'database'):
 
 db_config = read_db_config()
 
+@app.route('/')
+def index():
+    return render_template('test.html')
+
 @app.route('/data', methods=['GET'])
 def get_data():
-    db = mysql.connector.connect(**db_config)
-    cursor = db.cursor(dictionary=True)
+    db = pymysql.connect(**db_config)
+    cursor = db.cursor(pymysql.cursors.DictCursor)
 
     tables = [
-            'sfvis01', 'sfvis02', 'sfvis03',
-            'sfvis04', 'sfvis05', 'sfvis06',
-            'sfvis07', 'sfvis08', 'sfvis09',
-            'sfvis10', 'sfvis11', 'sfvis12',
-            'sfvis13', 'sfvis14', 'sfvis15'
+            'sfvis_cam1', 'sfvis_cam2', 'sfvis_cam3',
+            'sfvis_cam4', 'sfvis_cam5', 'sfvis_cam6',
+            'sfvis_cam7', 'sfvis_cam8', 'sfvis_cam9',
+            'sfvis_cam10', 'sfvis_cam11', 'sfvis_cam12',
+            'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
         ]
         
     result = {}

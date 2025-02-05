@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welding Room Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #ffffff; }
+        .dashboard { max-width: 1400px; height: 2000px; margin: auto; }
+        .card { background: rgb(0, 0, 0); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(2, 2, 2, 0.897); margin-bottom: 20px; padding: 20px; }
+        .tables-container { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .chart-container { height: 300px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        nav {position: relative; width: 100%; text-align: center; font-size: 1.2em; z-index: 900; background-color: #FFC317; border-radius: 0 0 10px 10px; padding: 10px 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
+        nav ul {display: flex; flex-direction: row; justify-content: space-around; list-style-type: none; margin: 0; padding: 0; }
+    	nav li {padding: 0.5em 1em; width: auto; }
+    	nav a {
+        	color: #121212; /* Darker text for contrast on yellow */
+        	text-decoration: none;
+        	padding: 10px 20px;
+        	border-radius: 5px;
+        	font-weight: bold;
+        	transition: background-color 0.3s ease, color 0.3s ease;
+    	}
+        nav a:hover {background-color: #EAEAEA; color: #333; 	}
+
+        * {margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* Main navigation styles */
+        .navbar {
+            background-color: #FFC317;
+            padding: 1rem;
+            font-family: Arial, sans-serif;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        /* Navigation items */
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: rgb(5, 5, 5);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: #FFC317;
+        }
+
+        /* Dropdown styles */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #444;
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-item {
+            list-style: none;
+        }
+
+        .dropdown-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.7rem 1rem;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-link:hover {
+            background-color: #555;
+        }
+
+        /* Show dropdown on hover */
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="card">
+            <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
+            <h1>Welding Monitoring Dashboard</h1>
+            <div id="lastUpdate"></div>
+        </div>
+
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">About</a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="#" class="dropdown-link">Our Team</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="#" class="dropdown-link">Our History</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="#" class="dropdown-link">Mission & Vision</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Services</a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="#" class="dropdown-link">Web Design</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="#" class="dropdown-link">Development</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="#" class="dropdown-link">Consulting</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Contact</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="card">
+            <h2>Current Metrics</h2>
+            <table>
+                <tbody id="metricsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <h1>Data from Tables</h1>
+    <div id="tables-container"></div>
+
+    <script>
+        // Fetch JSON data from Flask backend
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('metricsTableBody');
+                for (let table in data) {
+                    const tableData = data[table];
+                    const tableElement = document.createElement('table');
+                    const tableHeader = document.createElement('thead');
+                    const tableBody = document.createElement('tbody');
+
+                    // Create table header
+                    let headerRow = document.createElement('tr');
+                    headerRow.innerHTML = `<th>Timestamp</th><th>Workstation Camera</th><th>Vision System</th><th>Old Status</th><th>New Status</th><th>People Count</th><th>Frame Rate</th><th>Presence Change - Total</th><th>Presence Change - Rate</th>`;
+                    tableHeader.appendChild(headerRow);
+
+                    // Populate table rows with data
+                    tableData.forEach(row => {
+                        let rowElement = document.createElement('tr');
+                        rowElement.innerHTML = `<td>${row.Timestamp}</td><td>${row.Workstation_Camera}</td><td>${row.Vision_System}</td><td>${row.Old_Status}</td><td>${row.New_Status}</td><td>${row.People_Count}</td><td>${row.Frame_Rate}</td><td>${row.Presence_Change_Total}</td><td>${row.Presence_Change_Rate}</td></tr>`;
+                        tableBody.appendChild(rowElement);
+                    });
+
+                    // Append header and body to the table
+                    tableElement.appendChild(tableHeader);
+                    tableElement.appendChild(tableBody);
+
+                    // Add a title for each table
+                    const tableTitle = document.createElement('h2');
+                    tableTitle.innerText = table;
+                    container.appendChild(tableTitle);
+
+                    // Append the table to the container
+                    container.appendChild(tableElement);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    </script>
+</body>
+</html>
