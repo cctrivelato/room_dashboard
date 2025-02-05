@@ -4,7 +4,7 @@ import mysql.connector
 
 app = Flask(__name__)
 
-def read_db_config(filename='dbconfig.ini', section='database'):
+def read_db_config(filename='dbconfig.ini', section = 'database'):
     parser = ConfigParser()
     parser.read(filename)
     db = {}
@@ -20,7 +20,8 @@ db_config = read_db_config()
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    cursor = db_config(dictionary=True)
+    db = mysql.connector.connect(**db_config)
+    cursor = db.cursor(dictionary=True)
 
     tables = [
             'sfvis01', 'sfvis02', 'sfvis03',
