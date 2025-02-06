@@ -144,51 +144,171 @@
                 <tbody id="metricsTableBody"></tbody>
             </table>
         </div>
+
+        <select id="tableSelector" onchange="selectTable()">
+            <option value="cam1">-- Camera Booth 1 --</option>
+            <option value="cam2">-- Camera Booth 2 --</option>
+            <option value="cam3">-- Camera Booth 3 --</option>
+            <option value="cam4">-- Camera Booth 4 --</option>
+            <option value="cam5">-- Camera Booth 5 --</option>
+            <option value="cam6">-- Camera Booth 6 --</option>
+            <option value="cam7">-- Camera Booth 7 --</option>
+            <option value="cam8">-- Camera Booth 8 --</option>
+            <option value="cam9">-- Camera Booth 9 --</option>
+            <option value="cam10">-- Camera Booth 10 --</option>
+            <option value="cam11">-- Camera Booth 11 --</option>
+            <option value="cam12">-- Camera Booth 12 --</option>
+            <option value="cam13">-- Camera Booth 13 --</option>
+            <option value="cam14">-- Camera Booth 14 --</option>
+            <option value="cam15">-- Camera Booth 15 --</option>
+            <option value="cam16">-- Camera Booth 16 --</option>
+        </select>
+    
+        <h1>Data from Selected Table</h1>
+        <div id="tables-container"></div>
     </div>
 
-    <h1>Data from Tables</h1>
-    <div id="tables-container"></div>
-
     <script>
-        // Fetch JSON data from Flask backend
+        class Table {
+            constructor(timestamp, camera, sfvis, old_status, new_status, people_count, frame_rate, presence_change_total, presence_change_rate){
+                this.timestamp = timestamp;
+                this.camera = camera;
+                this.sfvis = sfvis;
+                this.old_status = old_status;
+                this.new_status = new_status;
+                this.people_count = people_count;
+                this.frame_rate = frame_rate;
+                this.presence_change_total = presence_change_total;
+                this.presence_change_rate = presence_change_rate;
+            }
+        }
+
+        const tables = {};
+        let average;
+        let table_amount = 0;
+
         fetch('/data')
             .then(response => response.json())
             .then(data => {
-                const container = document.getElementById('metricsTableBody');
                 for (let table in data) {
+                    tables[table_amount] = new Table ();
                     const tableData = data[table];
-                    const tableElement = document.createElement('table');
-                    const tableHeader = document.createElement('thead');
-                    const tableBody = document.createElement('tbody');
-
-                    // Create table header
-                    let headerRow = document.createElement('tr');
-                    headerRow.innerHTML = `<th>Timestamp</th><th>Workstation Camera</th><th>Vision System</th><th>Old Status</th><th>New Status</th><th>People Count</th><th>Frame Rate</th><th>Presence Change - Total</th><th>Presence Change - Rate</th>`;
-                    tableHeader.appendChild(headerRow);
-
+                    table_amount = table_amount + 1;
+                    
                     // Populate table rows with data
                     tableData.forEach(row => {
-                        let rowElement = document.createElement('tr');
-                        rowElement.innerHTML = `<td>${row.Timestamp}</td><td>${row.Workstation_Camera}</td><td>${row.Vision_System}</td><td>${row.Old_Status}</td><td>${row.New_Status}</td><td>${row.People_Count}</td><td>${row.Frame_Rate}</td><td>${row.Presence_Change_Total}</td><td>${row.Presence_Change_Rate}</td></tr>`;
-                        tableBody.appendChild(rowElement);
+                        if(row.Workstation_Camera == (table_amount + 1)){
+                            tables[table_amount].timestamp = row.Timestamp;
+                            tables[table_amount].camera = row.Workstation_Camera
+                            tables[table_amount].sfvis = row.Vision_System
+                            tables[table_amount].old_status = row.Old_Status
+                            tables[table_amount].new_status = row.New_Status
+                            tables[table_amount].people_count = row.People_Count
+                            tables[table_amount].frame_rate = row.Frame_Rate
+                            tables[table_amount].presence_change_total = row.Presence_Change_Total
+                            tables[table_amount].presence_change_rate = row.Presence_Change_Rate
+                        }
                     });
-
-                    // Append header and body to the table
-                    tableElement.appendChild(tableHeader);
-                    tableElement.appendChild(tableBody);
-
-                    // Add a title for each table
-                    const tableTitle = document.createElement('h2');
-                    tableTitle.innerText = table;
-                    container.appendChild(tableTitle);
-
-                    // Append the table to the container
-                    container.appendChild(tableElement);
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+
+        function calculateAverage(table, metric) {
+            let total = 0;
+
+            switch(metric){
+                case 'people_count':
+                    for (let i = 0; i < table_amount; i++) {
+                        total = total + table[i].people_count;
+                    }
+                    break;
+                case 'frame_rate':
+                    for (let i = 0; i < table_amount; i++) {
+                        total = total + table[i].frame_rate;
+                    }
+                    break;
+                case 'presence_change_total':
+                    for (let i = 0; i < table_amount; i++) {
+                        total = total + table[i].presence_change_total;
+                    }
+                    break;
+                case 'presence_change_rate':
+                    for (let i = 0; i < table_amount; i++) {
+                        total = total + table[i].presence_change_rate;
+                    }
+                    break;
+                default:
+                    total = 0;
+            }
+            return average = total/table_amount
+        }
+
+        const tableSelect = document.getElementById('tableSelector');
+
+        function tableDropdown(num){
+            let choice = num - 1
+
+            table_label = `<tr><th>Timestamp</th><th>Workstation Camera</th><th>Vision System</th><th>Old Status</th><th>New Status</th><th>People Count</th><th>Frame Rate</th><th>Presence Change - Total</th><th>Presence Change - Rate</th></tr>`;
+            table_choice = '<tr>`<td>' + tables[choice].timestamp + '</td><td>' + tables[choice].camera + '</td><td>' + tables[choice].sfvis + '</td><td>' + tables[choice].old_status + '</td><td>' + tables[choice].new_status + '</td><td>' + tables[choice].people_count + '</td><td>' + tables[choice].frame_rate + '</td><td>' + tables[choice].presence_change_total + '</td><td>' + tables[choice].presence_change_rate + '</td></tr>`;'
+            document.getElementById("tables-container").innerHTML = table_label;
+            document.getElementById("tables-container").innerHTML = table_choice;
+        }
+
+        function tableSelect() {
+            switch(tableSelect){
+                case 'cam1':
+                    tableDropdown(1);
+                    break;
+                case 'cam2':
+                    tableDropdown(2);
+                    break;
+                case 'cam3':
+                    tableDropdown(3);
+                    break;
+                case 'cam4':
+                    tableDropdown(4);
+                    break;
+                case 'cam5':
+                    tableDropdown(5);
+                    break;
+                case 'cam6':
+                    tableDropdown(6);
+                    break;
+                case 'cam7':
+                    tableDropdown(7);
+                    break;
+                case 'cam8':
+                    tableDropdown(8);
+                    break;
+                case 'cam9':
+                    tableDropdown(9);
+                    break;
+                case 'cam10':
+                    tableDropdown(10);
+                    break;
+                case 'cam11':
+                    tableDropdown(11);
+                    break;
+                case 'cam12':
+                    tableDropdown(12);
+                    break;
+                case 'cam13':
+                    tableDropdown(13);
+                    break;
+                case 'cam14':
+                    tableDropdown(14);
+                    break;
+                case 'cam15':
+                    tableDropdown(15);
+                    break;
+                case 'cam16':
+                    tableDropdown(16);
+                    break;
+            }
+
+        }
     </script>
 </body>
 </html>
