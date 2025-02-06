@@ -27,13 +27,12 @@ def get_data():
     db = pymysql.connect(**db_config)
     cursor = db.cursor(pymysql.cursors.DictCursor)
 
-    tables = [
-            'sfvis_cam1', 'sfvis_cam2', 'sfvis_cam3',
-            'sfvis_cam4', 'sfvis_cam5', 'sfvis_cam6',
-            'sfvis_cam7', 'sfvis_cam8', 'sfvis_cam9',
-            'sfvis_cam10', 'sfvis_cam11', 'sfvis_cam12',
-            'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15'
-        ]
+    tables = ['sfvis_cam1', 'sfvis_cam2', 'sfvis_cam3',
+              'sfvis_cam4', 'sfvis_cam5', 'sfvis_cam6',
+              'sfvis_cam7', 'sfvis_cam8', 'sfvis_cam9',
+              'sfvis_cam10', 'sfvis_cam11', 'sfvis_cam12',
+              'sfvis_cam13', 'sfvis_cam14', 'sfvis_cam15', 
+              'sfvis_cam16' ]
         
     result = {}
 

@@ -1,6 +1,4 @@
-import React, {} from 'react'
-
-        class Table extends React.Component{
+        class Table {
             constructor(timestamp, camera, sfvis, old_status, new_status, people_count, frame_rate, presence_change_total, presence_change_rate){
                 this.timestamp = timestamp;
                 this.camera = camera;
@@ -15,34 +13,65 @@ import React, {} from 'react'
         }
 
         const tables = {};
+        let average;
 
         fetch('/data')
             .then(response => response.json())
             .then(data => {
-                let count_table = 0;
+                let table_amount = 0;
 
                 for (let table in data) {
-                    tables[count_table] = new Table ();
+                    tables[table_amount] = new Table ();
                     const tableData = data[table];
-                    count_table = count_table + 1;
+                    table_amount = table_amount + 1;
                     
                     // Populate table rows with data
                     tableData.forEach(row => {
-                        tables[count_table].timestamp = row.Timestamp;
-                        tables[count_table].camera = row.Workstation_Camera
-                        tables[count_table].sfvis = row.Vision_System
-                        tables[count_table].old_status = row.Old_Status
-                        tables[count_table].new_status = row.New_Status
-                        tables[count_table].people_count = row.People_Count
-                        tables[count_table].frame_rate = row.Frame_Rate
-                        tables[count_table].presence_change_total = row.Presence_Change_Total
-                        tables[count_table].presence_change_rate = row.Presence_Change_Rate
+                        tables[table_amount].timestamp = row.Timestamp;
+                        tables[table_amount].camera = row.Workstation_Camera
+                        tables[table_amount].sfvis = row.Vision_System
+                        tables[table_amount].old_status = row.Old_Status
+                        tables[table_amount].new_status = row.New_Status
+                        tables[table_amount].people_count = row.People_Count
+                        tables[table_amount].frame_rate = row.Frame_Rate
+                        tables[table_amount].presence_change_total = row.Presence_Change_Total
+                        tables[table_amount].presence_change_rate = row.Presence_Change_Rate
                     });
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+
+            function calculateAverage(table, metric) {
+                let total = 0;
+
+                switch(metric){
+                    case 'people_count':
+                        for (let i = 0; i < table_amount; i++) {
+                            total = total + table[i].people_count;
+                        }
+                        break;
+                    case 'frame_rate':
+                        for (let i = 0; i < table_amount; i++) {
+                            total = total + table[i].frame_rate;
+                        }
+                        break;
+                    case 'presence_change_total':
+                        for (let i = 0; i < table_amount; i++) {
+                            total = total + table[i].presence_change_total;
+                        }
+                        break;
+                    case 'presence_change_rate':
+                        for (let i = 0; i < table_amount; i++) {
+                            total = total + table[i].presence_change_rate;
+                        }
+                        break;
+                    default:
+                        total = 0;
+                }
+                return average = total/table_amount
+            }
 
 
 
