@@ -89,13 +89,31 @@
         .nav-item:hover .dropdown-menu {
             display: block;
         }
+
+        #specificDataContainer {
+            background-color: #FFC317;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+
+        #specificData {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="dashboard">
         <div class="card">
             <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
-            <h1>Welding Monitoring Dashboard</h1>
+            <h1>Welding Room Monitoring Dashboard</h1>
             <div id="lastUpdate"></div>
         </div>
 
@@ -140,32 +158,51 @@
 
         <div class="card">
             <h2>Current Metrics</h2>
-            <table>
-                <tbody id="metricsTableBody"></tbody>
-            </table>
         </div>
 
-        <select id="tableSelector" onchange="selectTable()">
-            <option value="cam1">-- Camera Booth 1 --</option>
-            <option value="cam2">-- Camera Booth 2 --</option>
-            <option value="cam3">-- Camera Booth 3 --</option>
-            <option value="cam4">-- Camera Booth 4 --</option>
-            <option value="cam5">-- Camera Booth 5 --</option>
-            <option value="cam6">-- Camera Booth 6 --</option>
-            <option value="cam7">-- Camera Booth 7 --</option>
-            <option value="cam8">-- Camera Booth 8 --</option>
-            <option value="cam9">-- Camera Booth 9 --</option>
-            <option value="cam10">-- Camera Booth 10 --</option>
-            <option value="cam11">-- Camera Booth 11 --</option>
-            <option value="cam12">-- Camera Booth 12 --</option>
-            <option value="cam13">-- Camera Booth 13 --</option>
-            <option value="cam14">-- Camera Booth 14 --</option>
-            <option value="cam15">-- Camera Booth 15 --</option>
-            <option value="cam16">-- Camera Booth 16 --</option>
+        <select id="tableSelector">
+            <option value="0">-- Camera Booth 1 --</option>
+            <option value="1">-- Camera Booth 2 --</option>
+            <option value="2">-- Camera Booth 3 --</option>
+            <option value="3">-- Camera Booth 4 --</option>
+            <option value="4">-- Camera Booth 5 --</option>
+            <option value="5">-- Camera Booth 6 --</option>
+            <option value="6">-- Camera Booth 7 --</option>
+            <option value="7">-- Camera Booth 8 --</option>
+            <option value="8">-- Camera Booth 9 --</option>
+            <option value="9">-- Camera Booth 10 --</option>
+            <option value="10">-- Camera Booth 11 --</option>
+            <option value="11">-- Camera Booth 12 --</option>
+            <option value="12">-- Camera Booth 13 --</option>
+            <option value="13">-- Camera Booth 14 --</option>
+            <option value="14">-- Camera Booth 15 --</option>
+            <option value="15">-- Camera Booth 16 --</option>
         </select>
+
+        <button id="submitBtn">Submit</button>
     
         <h1>Data from Selected Table</h1>
-        <div id="tables-container"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Workstation Camera</th>
+                    <th>Vision System</th>
+                    <th>Old Status</th>
+                    <th>New Status</th>
+                    <th>People Count</th>
+                    <th>Frame Rate</th>
+                    <th>Presence Change - Total</th>
+                    <th>Presence Change - Rate</th>
+                </tr>
+            </thead>
+            <tbody id="metricsTableBody"></tbody>
+        </table>
+
+        <div id="specificDataContainer" class="card">
+            <h2>Relevant Data</h2>
+            <p id="specificData"></p>
+        </div>
     </div>
 
     <script>
@@ -183,132 +220,121 @@
             }
         }
 
+        const table_location = document.getElementById("metricsTableBody");
+        const table_chosen = document.getElementById("tableSelector");
+        const submitBtn = document.getElementById("submitBtn");
         const tables = {};
-        let average;
-        let table_amount = 0;
+        let table_amount;
+        let total_people_count = 0;
+        let total_frame_rate = 0;
+        let total_presence_change_total = 0;
+        let total_presence_change_rate = 0;
 
-        fetch('/data')
-            .then(response => response.json())
-            .then(data => {
-                for (let table in data) {
-                    tables[table_amount] = new Table ();
-                    const tableData = data[table];
-                    table_amount = table_amount + 1;
-                    
-                    // Populate table rows with data
-                    tableData.forEach(row => {
-                        if(row.Workstation_Camera == (table_amount + 1)){
-                            tables[table_amount].timestamp = row.Timestamp;
-                            tables[table_amount].camera = row.Workstation_Camera
-                            tables[table_amount].sfvis = row.Vision_System
-                            tables[table_amount].old_status = row.Old_Status
-                            tables[table_amount].new_status = row.New_Status
-                            tables[table_amount].people_count = row.People_Count
-                            tables[table_amount].frame_rate = row.Frame_Rate
-                            tables[table_amount].presence_change_total = row.Presence_Change_Total
-                            tables[table_amount].presence_change_rate = row.Presence_Change_Rate
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
+        function displayAverage(local, data){
+            let location = document.getElementById(local);
+            location.innerText = `${metric}: ${data}`;
+        }
+
+        function tableDropdown(choice){
+            const selectedTable = tables[choice];
+            table_location.innerHTML = '';
+
+            selectedTable.forEach(row => {
+                const table_row = `
+                    <tr>
+                        <td>${row.timestamp}</td>
+                        <td>${row.camera}</td>
+                        <td>${row.sfvis}</td>
+                        <td>${row.old_status}</td>
+                        <td>${row.new_status}</td>
+                        <td>${row.people_count}</td>
+                        <td>${row.frame_rate}</td>
+                        <td>${row.presence_change_total}</td>
+                        <td>${row.presence_change_rate}</td>
+                    </tr>
+                    `;
+
+                table_location.innerHTML = table_row;
             });
+        }
 
         function calculateAverage(table, metric) {
-            let total = 0;
-
             switch(metric){
                 case 'people_count':
-                    for (let i = 0; i < table_amount; i++) {
-                        total = total + table[i].people_count;
+                for(let i = 0; i < table_amount; i++){
+                        raw_change_rate = data[table].forEach(row => (row.People_Count));
+                        change_rate = parseInt(raw_change_rate);
+                        total_people_count = total_people_count + change_rate;
+                        average = total_people_count/table_amount;
                     }
                     break;
                 case 'frame_rate':
-                    for (let i = 0; i < table_amount; i++) {
-                        total = total + table[i].frame_rate;
+                for(let i = 0; i < table_amount; i++){
+                        raw_change_rate = data[table].forEach(row => (row.Frame_Rate));
+                        change_rate = parseInt(raw_change_rate);
+                        total_frame_rate = total_frame_rate + change_rate;
+                        average = total_frame_rate/table_amount;
                     }
                     break;
                 case 'presence_change_total':
-                    for (let i = 0; i < table_amount; i++) {
-                        total = total + table[i].presence_change_total;
+                for(let i = 0; i < table_amount; i++){
+                        raw_change_rate = data[table].forEach(row => (row.Presence_Change_Total));
+                        change_rate = parseInt(raw_change_rate);
+                        total_presence_change_total = total_presence_change_total + change_rate;
+                        average = total_presence_change_total/table_amount;
                     }
                     break;
                 case 'presence_change_rate':
-                    for (let i = 0; i < table_amount; i++) {
-                        total = total + table[i].presence_change_rate;
+                    for(let i = 0; i < table_amount; i++){
+                        raw_change_rate = data[table].forEach(row => (row.Presence_Change_Rate));
+                        change_rate = parseInt(raw_change_rate);
+                        total_presence_change_rate = total_presence_change_rate + change_rate;
+                        average = total_presence_change_rate/table_amount;
                     }
                     break;
                 default:
                     total = 0;
             }
-            return average = total/table_amount
+            return average;
         }
+        
 
-        const tableSelect = document.getElementById('tableSelector');
+        function updateData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    for (let table in data) {
+                        table_amount = table_amount + 1;
+                        let subs_sys = table.substring(9);
+                        let sys = parseInt(subs_sys);
+                        console.log(sys);
 
-        function tableDropdown(num){
-            let choice = num - 1
+                        const tableRows = data[table].map(row => new Table(
+                                row.Timestamp, row.Workstation_Camera, row.Vision_System,
+                                row.Old_Status, row.New_Status, row.People_Count,
+                                row.Frame_Rate, row.Presence_Change_Total, row.Presence_Change_Rate
+                        ));
+                        tables [sys - 1] = tableRows;
+                    }
 
-            table_label = `<tr><th>Timestamp</th><th>Workstation Camera</th><th>Vision System</th><th>Old Status</th><th>New Status</th><th>People Count</th><th>Frame Rate</th><th>Presence Change - Total</th><th>Presence Change - Rate</th></tr>`;
-            table_choice = '<tr>`<td>' + tables[choice].timestamp + '</td><td>' + tables[choice].camera + '</td><td>' + tables[choice].sfvis + '</td><td>' + tables[choice].old_status + '</td><td>' + tables[choice].new_status + '</td><td>' + tables[choice].people_count + '</td><td>' + tables[choice].frame_rate + '</td><td>' + tables[choice].presence_change_total + '</td><td>' + tables[choice].presence_change_rate + '</td></tr>`;'
-            document.getElementById("tables-container").innerHTML = table_label;
-            document.getElementById("tables-container").innerHTML = table_choice;
-        }
+                    submitBtn.addEventListener('click', () => {
+                        const selectedValue = table_chosen.value;
+                        tableDropdown(selectedValue);
+                    });
 
-        function tableSelect() {
-            switch(tableSelect){
-                case 'cam1':
-                    tableDropdown(1);
-                    break;
-                case 'cam2':
-                    tableDropdown(2);
-                    break;
-                case 'cam3':
-                    tableDropdown(3);
-                    break;
-                case 'cam4':
-                    tableDropdown(4);
-                    break;
-                case 'cam5':
-                    tableDropdown(5);
-                    break;
-                case 'cam6':
-                    tableDropdown(6);
-                    break;
-                case 'cam7':
-                    tableDropdown(7);
-                    break;
-                case 'cam8':
-                    tableDropdown(8);
-                    break;
-                case 'cam9':
-                    tableDropdown(9);
-                    break;
-                case 'cam10':
-                    tableDropdown(10);
-                    break;
-                case 'cam11':
-                    tableDropdown(11);
-                    break;
-                case 'cam12':
-                    tableDropdown(12);
-                    break;
-                case 'cam13':
-                    tableDropdown(13);
-                    break;
-                case 'cam14':
-                    tableDropdown(14);
-                    break;
-                case 'cam15':
-                    tableDropdown(15);
-                    break;
-                case 'cam16':
-                    tableDropdown(16);
-                    break;
+                    tableDropdown(0);
+
+                    
+
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
             }
+        
+        setInterval(updateDate, 10000);
 
-        }
+        updateData();
     </script>
 </body>
 </html>
