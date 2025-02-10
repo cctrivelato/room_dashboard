@@ -224,15 +224,11 @@
         const table_chosen = document.getElementById("tableSelector");
         const submitBtn = document.getElementById("submitBtn");
         const tables = {};
-        let table_amount;
-        let total_people_count = 0;
-        let total_frame_rate = 0;
-        let total_presence_change_total = 0;
-        let total_presence_change_rate = 0;
+        let table_amount = 0;
 
-        function displayAverage(local, data){
+        function displayAverage(local, data, metric){
             let location = document.getElementById(local);
-            location.innerText = `${metric}: ${data}`;
+            location.innerText = `Average of ${metric}: ${data}`;
         }
 
         function tableDropdown(choice){
@@ -254,48 +250,22 @@
                     </tr>
                     `;
 
-                table_location.innerHTML = table_row;
+                table_location.innerHTML += table_row;
             });
         }
 
-        function calculateAverage(table, metric) {
-            switch(metric){
-                case 'people_count':
-                for(let i = 0; i < table_amount; i++){
-                        raw_change_rate = data[table].forEach(row => (row.People_Count));
-                        change_rate = parseInt(raw_change_rate);
-                        total_people_count = total_people_count + change_rate;
-                        average = total_people_count/table_amount;
-                    }
-                    break;
-                case 'frame_rate':
-                for(let i = 0; i < table_amount; i++){
-                        raw_change_rate = data[table].forEach(row => (row.Frame_Rate));
-                        change_rate = parseInt(raw_change_rate);
-                        total_frame_rate = total_frame_rate + change_rate;
-                        average = total_frame_rate/table_amount;
-                    }
-                    break;
-                case 'presence_change_total':
-                for(let i = 0; i < table_amount; i++){
-                        raw_change_rate = data[table].forEach(row => (row.Presence_Change_Total));
-                        change_rate = parseInt(raw_change_rate);
-                        total_presence_change_total = total_presence_change_total + change_rate;
-                        average = total_presence_change_total/table_amount;
-                    }
-                    break;
-                case 'presence_change_rate':
-                    for(let i = 0; i < table_amount; i++){
-                        raw_change_rate = data[table].forEach(row => (row.Presence_Change_Rate));
-                        change_rate = parseInt(raw_change_rate);
-                        total_presence_change_rate = total_presence_change_rate + change_rate;
-                        average = total_presence_change_rate/table_amount;
-                    }
-                    break;
-                default:
-                    total = 0;
+        function calculateAverage(metric) {
+            let total = 0;
+            let count = 0;
+
+            for (let tableKey in tables) {
+                const selectedTable = tables[tableKey];
+                selectedTable.forEach(row => {
+                    total += row[metric];
+                    count++;
+                });
             }
-            return average;
+            return total / count || 0;
         }
         
 
@@ -324,7 +294,8 @@
 
                     tableDropdown(0);
 
-                    
+                    const ppl_avg = calculateAverage('people_count');
+                    displayAverage('specificData', ppl_avg, 'people_count');
 
                 })
                 .catch(error => {
@@ -332,7 +303,7 @@
                 });
             }
         
-        setInterval(updateDate, 10000);
+        setInterval(updateData, 10000);
 
         updateData();
     </script>
