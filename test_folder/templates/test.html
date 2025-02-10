@@ -5,14 +5,67 @@
     <title>Welding Room Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #ffffff; }
-        .dashboard { max-width: 1400px; height: 2000px; margin: auto; }
-        .card { background: rgb(0, 0, 0); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(2, 2, 2, 0.897); margin-bottom: 20px; padding: 20px; }
-        .tables-container { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .chart-container { height: 300px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: auto;
+            padding-bottom: 40px;
+        }
+
+        .card {
+            background: #222;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tables-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .chart-container {
+            height: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #FFC317;
+            color: #121212;
+        }
+
         nav {position: relative; width: 100%; text-align: center; font-size: 1.2em; z-index: 900; background-color: #FFC317; border-radius: 10px 10px 10px 10px; padding: 10px 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
         nav ul {display: flex; flex-direction: row; justify-content: space-around; list-style-type: none; margin: 0; padding: 0; }
     	nav li {padding: 0.5em 1em; width: auto; }
@@ -90,23 +143,88 @@
             display: block;
         }
 
-        #specificDataContainer {
-            background-color: #FFC317;
-            color: black;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            max-width: 500px;
-            margin: auto;
-            text-align: center;
+        .side-columns {
+        	display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start; /* Ensures they align at the top */
+            gap: 20px;
+    	}
+
+        .left-column, .middle-column, .right-column {
+            flex: 1;
         }
 
-        #specificData {
+        #tableSelector {
+            text-align: center;
+            border-radius: 8px;
+            height: 50px;
+            width: 200px;
+        }
+
+        #submitBtn {
+            background-color: #FFC317;
+            color: black;
+            border-radius: 8px;
+            height: 50px;
+            width: 150px;
+            border-style: none;
+        }
+
+        #submitBtn:hover {
+            color: #FFC317;
+            background-color: black;
+        }
+
+
+        #specificDataContainer {
+            top: 40px;
+            background-color: #FFC317;
+            color: black;
+            margin: auto;
+            text-align: center;
+
+        }
+
+        #specificDataContainer2 {
+            color: #FFC317;
+            background-color: black;
+            margin: auto;
+            text-align: center;
+            left: 10px;
+        }
+
+        #specificDataContainer3 {
+            color: #FFC317;
+            background-color: black;
+            margin: auto;
+            text-align: center;
+            right: 10px;
+        }
+
+        #specificDataContainer4 {
+            background-color: #FFC317;
+            color: black;
+            margin: auto;
+            text-align: center;
+            right: 10px;
+        }
+
+        #specificData, #specificData2, #specificData3, #specificData4 {
             font-size: 1.5em;
             font-weight: bold;
             color: white;
         }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 0.9em;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -117,6 +235,7 @@
             <div id="lastUpdate"></div>
         </div>
 
+        <!--
         <nav class="navbar">
             <ul class="nav-list">
                 <li class="nav-item">
@@ -155,54 +274,80 @@
                 </li>
             </ul>
         </nav>
+        -->
 
         <div class="card">
             <h2>Current Metrics</h2>
         </div>
 
+        <h1>Select Table</h1>
+
         <select id="tableSelector">
-            <option value="0">-- Camera Booth 1 --</option>
-            <option value="1">-- Camera Booth 2 --</option>
-            <option value="2">-- Camera Booth 3 --</option>
-            <option value="3">-- Camera Booth 4 --</option>
-            <option value="4">-- Camera Booth 5 --</option>
-            <option value="5">-- Camera Booth 6 --</option>
-            <option value="6">-- Camera Booth 7 --</option>
-            <option value="7">-- Camera Booth 8 --</option>
-            <option value="8">-- Camera Booth 9 --</option>
-            <option value="9">-- Camera Booth 10 --</option>
-            <option value="10">-- Camera Booth 11 --</option>
-            <option value="11">-- Camera Booth 12 --</option>
-            <option value="12">-- Camera Booth 13 --</option>
-            <option value="13">-- Camera Booth 14 --</option>
-            <option value="14">-- Camera Booth 15 --</option>
-            <option value="15">-- Camera Booth 16 --</option>
+            <option value="default">-- Select Here --</option>
+            <option value="0">Camera Booth 1</option>
+            <option value="1">Camera Booth 2</option>
+            <option value="2">Camera Booth 3</option>
+            <option value="3">Camera Booth 4</option>
+            <option value="4">Camera Booth 5</option>
+            <option value="5">Camera Booth 6</option>
+            <option value="6">Camera Booth 7</option>
+            <option value="7">Camera Booth 8</option>
+            <option value="8">Camera Booth 9</option>
+            <option value="9">Camera Booth 10</option>
+            <option value="10">Camera Booth 11</option>
+            <option value="11">Camera Booth 12</option>
+            <option value="12">Camera Booth 13</option>
+            <option value="13">Camera Booth 14</option>
+            <option value="14">Camera Booth 15</option>
+            <option value="15">Camera Booth 16</option>
         </select>
 
         <button id="submitBtn">Submit</button>
     
-        <h1>Data from Selected Table</h1>
         <table>
             <thead>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Workstation Camera</th>
-                    <th>Vision System</th>
-                    <th>Old Status</th>
-                    <th>New Status</th>
-                    <th>People Count</th>
-                    <th>Frame Rate</th>
-                    <th>Presence Change - Total</th>
-                    <th>Presence Change - Rate</th>
-                </tr>
             </thead>
             <tbody id="metricsTableBody"></tbody>
         </table>
 
-        <div id="specificDataContainer" class="card">
-            <h2>Relevant Data</h2>
-            <p id="specificData"></p>
+        <div class="side-columns">
+
+            <div class="left-column">
+                <h2>Data Trend</h2>
+                <canvas id="myChart"></canvas>
+            </div>
+            
+            <div class="middle-column">
+                <div id="specificDataContainer" class="card">
+                    <h2>Average Data - People Count</h2>
+                    <p id="specificData"></p>
+                </div>
+
+                <div id="specificDataContainer2" class="card">
+                    <h2>Average Data - Frame Rate</h2>
+                    <p id="specificData2"></p>
+                </div>
+
+                <div id="specificDataContainer3" class="card">
+                    <h2>Average Data - Presence Total</h2>
+                    <p id="specificData3"></p>
+                </div>
+
+                <div id="specificDataContainer4" class="card">
+                    <h2>Average Data - Presence Rate</h2>
+                    <p id="specificData4"></p>
+                </div>
+            </div>
+            
+
+            <div class="right-column">
+                <h2>Random Data</h2>
+                <p id="randomData"></p>
+                <button onclick="updateRandomData()">Refresh</button>
+            </div>
+
         </div>
+
     </div>
 
     <script>
@@ -226,9 +371,20 @@
         const tables = {};
         let table_amount = 0;
 
-        function displayAverage(local, data, metric){
+        function updateRandomData(metric) {
+            const random = Math.floor(Math.random() * table_amount);
+
+            data_chosen = tables[random].forEach(row => {
+                const table_row = `${row.metric}`;
+                });
+
+            locate = 'randomData';
+            locate.innerHTML = data_chosen;
+        }
+
+        function displayData(local, data){
             let location = document.getElementById(local);
-            location.innerText = `Average of ${metric}: ${data}`;
+            location.innerText = `${data}`;
         }
 
         function tableDropdown(choice){
@@ -237,6 +393,17 @@
 
             selectedTable.forEach(row => {
                 const table_row = `
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Workstation Camera</th>
+                        <th>Vision System</th>
+                        <th>Old Status</th>
+                        <th>New Status</th>
+                        <th>People Count</th>
+                        <th>Frame Rate</th>
+                        <th>Presence Change - Total</th>
+                        <th>Presence Change - Rate</th>
+                    </tr>
                     <tr>
                         <td>${row.timestamp}</td>
                         <td>${row.camera}</td>
@@ -292,11 +459,19 @@
                         tableDropdown(selectedValue);
                     });
 
-                    tableDropdown(0);
-
                     const ppl_avg = calculateAverage('people_count');
-                    displayAverage('specificData', ppl_avg, 'people_count');
+                    displayData('specificData', ppl_avg);
 
+                    const frame_avg = calculateAverage('frame_rate');
+                    displayData('specificData2', frame_avg);
+
+                    const pres_total_avg = calculateAverage('presence_change_total');
+                    displayData('specificData3', pres_total_avg);
+
+                    const pres_rate_avg = calculateAverage('presence_change_rate');
+                    displayData('specificData4', pres_rate_avg);
+
+                    updateData('People_Count');
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
