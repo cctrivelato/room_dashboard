@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #5f5b5bfd;
         }
 
         .dashboard {
@@ -155,6 +156,15 @@
             flex: 1;
         }
 
+        .left-column, .right-column {
+            background-color: #FFC317;
+            color: black;
+            border-radius: 8px;
+            text-align: center;
+            padding-top: 20px;
+            height: 383px;
+        }
+
         #tableSelector {
             text-align: center;
             border-radius: 8px;
@@ -280,35 +290,38 @@
             <h2>Current Metrics</h2>
         </div>
 
-        <h1>Select Table</h1>
+        <div class="card">
 
-        <select id="tableSelector">
-            <option value="default">-- Select Here --</option>
-            <option value="0">Camera Booth 1</option>
-            <option value="1">Camera Booth 2</option>
-            <option value="2">Camera Booth 3</option>
-            <option value="3">Camera Booth 4</option>
-            <option value="4">Camera Booth 5</option>
-            <option value="5">Camera Booth 6</option>
-            <option value="6">Camera Booth 7</option>
-            <option value="7">Camera Booth 8</option>
-            <option value="8">Camera Booth 9</option>
-            <option value="9">Camera Booth 10</option>
-            <option value="10">Camera Booth 11</option>
-            <option value="11">Camera Booth 12</option>
-            <option value="12">Camera Booth 13</option>
-            <option value="13">Camera Booth 14</option>
-            <option value="14">Camera Booth 15</option>
-            <option value="15">Camera Booth 16</option>
-        </select>
+            <h1>Booth Data Status</h1>
 
-        <button id="submitBtn">Submit</button>
-    
-        <table>
-            <thead>
-            </thead>
-            <tbody id="metricsTableBody"></tbody>
-        </table>
+            <select id="tableSelector">
+                <option value="default">-- Select Here --</option>
+                <option value="0">Booth 1</option>
+                <option value="1">Booth 2</option>
+                <option value="2">Booth 3</option>
+                <option value="3">Booth 4</option>
+                <option value="4">Booth 5</option>
+                <option value="5">Booth 6</option>
+                <option value="6">Booth 7</option>
+                <option value="7">Booth 8</option>
+                <option value="8">Booth 9</option>
+                <option value="9">Booth 10</option>
+                <option value="10">Booth 11</option>
+                <option value="11">Booth 12</option>
+                <option value="12">Booth 13</option>
+                <option value="13">Booth 14</option>
+                <option value="14">Booth 15</option>
+                <option value="15">Booth 16</option>
+            </select>
+
+            <button id="submitBtn">Submit</button>
+        
+            <table>
+                <thead>
+                </thead>
+                <tbody id="metricsTableBody"></tbody>
+            </table>
+        </div>
 
         <div class="side-columns">
 
@@ -372,14 +385,18 @@
         let table_amount = 0;
 
         function updateRandomData(metric) {
-            const random = Math.floor(Math.random() * table_amount);
+            if (table_amount === 0) return null;
 
-            data_chosen = tables[random].forEach(row => {
-                const table_row = `${row.metric}`;
-                });
+            const randomIndex = Math.floor(Math.random() * table_amount);
+            const selectedTable = tables[randomIndex];
 
-            locate = 'randomData';
-            locate.innerHTML = data_chosen;
+            if (!selectedTable || selectedTable.length === 0) return null;
+
+            const randomRow = selectedTable[Math.floor(Math.random() * selectedTable.length)];
+            const data_chosen = randomRow[metric];
+
+            console.log(data_chosen);
+            return data_chosen;
         }
 
         function displayData(local, data){
@@ -452,6 +469,7 @@
                                 row.Frame_Rate, row.Presence_Change_Total, row.Presence_Change_Rate
                         ));
                         tables [sys - 1] = tableRows;
+                        console.log(tables);
                     }
 
                     submitBtn.addEventListener('click', () => {
@@ -471,7 +489,8 @@
                     const pres_rate_avg = calculateAverage('presence_change_rate');
                     displayData('specificData4', pres_rate_avg);
 
-                    updateData('People_Count');
+                    let random = updateRandomData();
+                    displayData('randomData', random);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
