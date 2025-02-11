@@ -385,14 +385,18 @@
         let table_amount = 0;
 
         function updateRandomData(metric) {
-            const random = Math.floor(Math.random() * table_amount);
+            if (table_amount === 0) return null;
 
-            data_chosen = tables[random].forEach(row => {
-                const table_row = `${row.metric}`;
-                });
+            const randomIndex = Math.floor(Math.random() * table_amount);
+            const selectedTable = tables[randomIndex];
 
-            locate = 'randomData';
-            locate.innerHTML = data_chosen;
+            if (!selectedTable || selectedTable.length === 0) return null;
+
+            const randomRow = selectedTable[Math.floor(Math.random() * selectedTable.length)];
+            const data_chosen = randomRow[metric];
+
+            console.log(data_chosen);
+            return data_chosen;
         }
 
         function displayData(local, data){
@@ -465,6 +469,7 @@
                                 row.Frame_Rate, row.Presence_Change_Total, row.Presence_Change_Rate
                         ));
                         tables [sys - 1] = tableRows;
+                        console.log(tables);
                     }
 
                     submitBtn.addEventListener('click', () => {
@@ -484,7 +489,8 @@
                     const pres_rate_avg = calculateAverage('presence_change_rate');
                     displayData('specificData4', pres_rate_avg);
 
-                    updateData('People_Count');
+                    let random = updateRandomData();
+                    displayData('randomData', random);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
