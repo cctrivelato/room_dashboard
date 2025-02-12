@@ -67,51 +67,6 @@
             color: #121212;
         }
 
-        nav {position: relative; width: 100%; text-align: center; font-size: 1.2em; z-index: 900; background-color: #FFC317; border-radius: 10px 10px 10px 10px; padding: 10px 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
-        nav ul {display: flex; flex-direction: row; justify-content: space-around; list-style-type: none; margin: 0; padding: 0; }
-    	nav li {padding: 0.5em 1em; width: auto; }
-    	nav a {
-        	color: #121212; /* Darker text for contrast on yellow */
-        	text-decoration: none;
-        	padding: 10px 20px;
-        	border-radius: 5px;
-        	font-weight: bold;
-        	transition: background-color 0.3s ease, color 0.3s ease;
-    	}
-        nav a:hover {background-color: #EAEAEA; color: #333; 	}
-
-        * {margin: 0; padding: 0; box-sizing: border-box; }
-
-        /* Main navigation styles */
-        .navbar {
-            background-color: #FFC317;
-            padding: 1rem;
-            font-family: Arial, sans-serif;
-        }
-
-        .nav-list {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-
-        /* Navigation items */
-        .nav-item {
-            position: relative;
-        }
-
-        .nav-link {
-            color: rgb(5, 5, 5);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            display: block;
-            transition: background-color 0.3s;
-        }
-
-        .nav-link:hover {
-            background-color: #FFC317;
-        }
-
         /* Dropdown styles */
         .dropdown-menu {
             display: none;
@@ -189,8 +144,8 @@
 
         #specificDataContainer {
             top: 40px;
-            background-color: #FFC317;
-            color: black;
+            color: #FFC317;
+            background-color: black;
             margin: auto;
             text-align: center;
 
@@ -213,8 +168,8 @@
         }
 
         #specificDataContainer4 {
-            background-color: #FFC317;
-            color: black;
+            color: #FFC317;
+            background-color: black;
             margin: auto;
             text-align: center;
             right: 10px;
@@ -224,6 +179,28 @@
             font-size: 1.5em;
             font-weight: bold;
             color: white;
+        }
+
+        #booth {
+            background-color: black;
+            color: #FFC317;
+            font-size: 50px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        #label {
+            font-size: 25px;
+            margin-bottom: 0px;
+        }
+
+        #randomData {
+            background-color: black;
+            color: #ffffff;
+            justify-items: center;
+            max-width: 300px;
+            padding: 25px;
+            border-radius: 0 10px 10px 0;
+            font-size: 50px;
         }
 
         @media (max-width: 768px) {
@@ -244,47 +221,6 @@
             <h1>Welding Room Monitoring Dashboard</h1>
             <div id="lastUpdate"></div>
         </div>
-
-        <!--
-        <nav class="navbar">
-            <ul class="nav-list">
-                <li class="nav-item">
-                    <a href="/" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">About</a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-item">
-                            <a href="#" class="dropdown-link">Our Team</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a href="#" class="dropdown-link">Our History</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a href="#" class="dropdown-link">Mission & Vision</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Services</a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-item">
-                            <a href="#" class="dropdown-link">Web Design</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a href="#" class="dropdown-link">Development</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a href="#" class="dropdown-link">Consulting</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Contact</a>
-                </li>
-            </ul>
-        </nav>
-        -->
 
         <div class="card">
             <h2>Current Metrics</h2>
@@ -332,7 +268,7 @@
             
             <div class="middle-column">
                 <div id="specificDataContainer" class="card">
-                    <h2>Average Data - People Count</h2>
+                    <h2>Average Data - People Presence</h2>
                     <p id="specificData"></p>
                 </div>
 
@@ -342,21 +278,21 @@
                 </div>
 
                 <div id="specificDataContainer3" class="card">
-                    <h2>Average Data - Presence Total</h2>
+                    <h2>Average Data - Presence Change Total</h2>
                     <p id="specificData3"></p>
                 </div>
 
                 <div id="specificDataContainer4" class="card">
-                    <h2>Average Data - Presence Rate</h2>
+                    <h2>Average Data - Presence Change Rate</h2>
                     <p id="specificData4"></p>
                 </div>
             </div>
             
 
             <div class="right-column">
-                <h2>Random Data</h2>
-                <p id="randomData"></p>
-                <button onclick="updateRandomData()">Refresh</button>
+                <h1 id="booth" class="card"></h1>
+                <h3 id="label"></h3>
+                <h5 id="randomData" class="card"></h5>
             </div>
 
         </div>
@@ -364,7 +300,7 @@
     </div>
 
     <script>
-        class Table {
+        class Vis {
             constructor(timestamp, camera, sfvis, old_status, new_status, people_count, frame_rate, presence_change_total, presence_change_rate){
                 this.timestamp = timestamp;
                 this.camera = camera;
@@ -381,35 +317,69 @@
         const table_location = document.getElementById("metricsTableBody");
         const table_chosen = document.getElementById("tableSelector");
         const submitBtn = document.getElementById("submitBtn");
-        const tables = {};
-        let table_amount = 0;
+        const tables = [];
+        let table_index = 0; sys = 0;
 
-        function updateRandomData(metric) {
-            if (table_amount === 0) return null;
+        function updateRandomData() {
+            let data_chosen = 0;
+            let metric;
+            const randomMetrics = Math.floor(Math.random() * 6);
+            const randomTable = Math.floor(Math.random() * 16);
+            let selectedTable = tables[randomTable];
 
-            const randomIndex = Math.floor(Math.random() * table_amount);
-            const selectedTable = tables[randomIndex];
+            switch(randomMetrics){
+                case 0:
+                    metric = 'People Present Right Now';
+                    data_chosen = parseInt(selectedTable.people_count);
+                    break;
+                
+                case 1:
+                    metric = 'Frame Rate';
+                    data_chosen = parseInt(selectedTable.frame_rate);
+                    break;
 
-            if (!selectedTable || selectedTable.length === 0) return null;
+                case 2:
+                    metric = 'Presence Change as Total';
+                    data_chosen = parseInt(selectedTable.presence_change_total);
+                    break;
 
-            const randomRow = selectedTable[Math.floor(Math.random() * selectedTable.length)];
-            const data_chosen = randomRow[metric];
+                case 3:
+                    metric = 'Presence Change';
+                    data_chosen = `${parseInt(selectedTable.presence_change_rate)} /min`;
+                    break;
+                case 4:
+                    metric = 'Old Status';
+                    data_chosen = selectedTable.old_status;
+                    break;
+                
+                case 5:
+                    metric = 'New Status';
+                    data_chosen = selectedTable.new_status;
+                    break;
 
-            console.log(data_chosen);
-            return data_chosen;
+                case 'default':
+                    metric = 'No metric';
+                    data_chosen = 'Nothing Here';
+                    break;
+            }
+            return `"${metric}" - Booth ${selectedTable.camera}: ${data_chosen}`;
         }
 
         function displayData(local, data){
             let location = document.getElementById(local);
-            location.innerText = `${data}`;
+            location.innerHTML = `${data}`;
         }
 
         function tableDropdown(choice){
+            if (!tables[choice]) {
+                console.warn("Invalid table selection");
+                return;
+            }
+
             const selectedTable = tables[choice];
             table_location.innerHTML = '';
-
-            selectedTable.forEach(row => {
-                const table_row = `
+        
+            const table_row = `
                     <tr>
                         <th>Timestamp</th>
                         <th>Workstation Camera</th>
@@ -422,33 +392,33 @@
                         <th>Presence Change - Rate</th>
                     </tr>
                     <tr>
-                        <td>${row.timestamp}</td>
-                        <td>${row.camera}</td>
-                        <td>${row.sfvis}</td>
-                        <td>${row.old_status}</td>
-                        <td>${row.new_status}</td>
-                        <td>${row.people_count}</td>
-                        <td>${row.frame_rate}</td>
-                        <td>${row.presence_change_total}</td>
-                        <td>${row.presence_change_rate}</td>
+                        <td>${selectedTable.timestamp}</td>
+                        <td>${selectedTable.camera}</td>
+                        <td>${selectedTable.sfvis}</td>
+                        <td>${selectedTable.old_status}</td>
+                        <td>${selectedTable.new_status}</td>
+                        <td>${selectedTable.people_count}</td>
+                        <td>${selectedTable.frame_rate}</td>
+                        <td>${selectedTable.presence_change_total}</td>
+                        <td>${selectedTable.presence_change_rate}</td>
                     </tr>
                     `;
 
                 table_location.innerHTML += table_row;
-            });
         }
 
         function calculateAverage(metric) {
-            let total = 0;
-            let count = 0;
+            let total = 0; count = 0;
+            let selectedTable = 0;
 
-            for (let tableKey in tables) {
-                const selectedTable = tables[tableKey];
-                selectedTable.forEach(row => {
-                    total += row[metric];
+            if (tables.length === 0) return 0;
+
+            tables.forEach(table => {
+                if (table[metric] !== undefined) {
+                    total += parseFloat(table[metric]) || 0;
                     count++;
-                });
-            }
+                }
+            });
             return total / count || 0;
         }
         
@@ -458,18 +428,26 @@
                 .then(response => response.json())
                 .then(data => {
                     for (let table in data) {
-                        table_amount = table_amount + 1;
                         let subs_sys = table.substring(9);
-                        let sys = parseInt(subs_sys);
+                        sys = parseInt(subs_sys);
                         console.log(sys);
 
-                        const tableRows = data[table].map(row => new Table(
-                                row.Timestamp, row.Workstation_Camera, row.Vision_System,
-                                row.Old_Status, row.New_Status, row.People_Count,
-                                row.Frame_Rate, row.Presence_Change_Total, row.Presence_Change_Rate
-                        ));
-                        tables [sys - 1] = tableRows;
-                        console.log(tables);
+                        data[table].forEach(row => {
+                            const tableRow = new Vis(
+                                `${row.Timestamp}`,
+                                `${row.Workstation_Camera}`,
+                                `${row.Vision_System}`,
+                                `${row.Old_Status}`,
+                                `${row.New_Status}`,
+                                `${row.People_Count}`,
+                                `${row.Frame_Rate}`,
+                                `${row.Presence_Change_Total}`,
+                                `${row.Presence_Change_Rate}`
+                            );
+
+                            tables[sys - 1] = tableRow;
+                        });
+                        console.log(tables[sys-1]);
                     }
 
                     submitBtn.addEventListener('click', () => {
@@ -477,20 +455,18 @@
                         tableDropdown(selectedValue);
                     });
 
-                    const ppl_avg = calculateAverage('people_count');
-                    displayData('specificData', ppl_avg);
+                    displayData('specificData', calculateAverage('people_count'));
+                    displayData('specificData2', calculateAverage('frame_rate'));
+                    displayData('specificData3', calculateAverage('presence_change_total'));
+                    displayData('specificData4', calculateAverage('presence_change_rate'));
 
-                    const frame_avg = calculateAverage('frame_rate');
-                    displayData('specificData2', frame_avg);
+                    let random_data = updateRandomData();
 
-                    const pres_total_avg = calculateAverage('presence_change_total');
-                    displayData('specificData3', pres_total_avg);
-
-                    const pres_rate_avg = calculateAverage('presence_change_rate');
-                    displayData('specificData4', pres_rate_avg);
-
-                    let random = updateRandomData();
-                    displayData('randomData', random);
+                    let index_dash = random_data.indexOf('-');
+                    let index_colon = random_data.indexOf(':');
+                    displayData('booth', random_data.substring(index_dash+2, index_colon));
+                    displayData('label', random_data.substring(0, index_dash-1));
+                    displayData('randomData', random_data.substring(index_colon+2));
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
