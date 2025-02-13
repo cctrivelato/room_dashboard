@@ -127,14 +127,14 @@
             height: 200px;
         }
 
-        .left-column, .right-column {
+        .right-column {
             background-color: #FFC317;
             color: black;
             box-shadow: 0 5px 10px #000000;
             border-radius: 8px;
             text-align: center;
             padding-top: 20px;
-            height: 491px;
+            height: 571px;
         }
 
         .graph-container {
@@ -150,15 +150,17 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            height: 400px;
+            height: 550px;
             overflow: hidden;
             display: flex;
+            overflow-y: auto;
             flex-direction: column;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
         }
 
         .table-scroll {
             background-color: #FFC317;
-            overflow-y: auto;
             flex-grow: 1;
         }
 
@@ -178,6 +180,26 @@
 
         .table-scroll::-webkit-scrollbar-thumb:hover {
             background: #555;
+        }
+
+        .data-trend {
+            background-color: #FFC317;
+            padding: 30px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .data-trend h2 {
+            background-color: #000000;
+            color: #FFC317;
+            border-radius: 10px;
+            padding-top: 100px;
+            padding-bottom: 20px;
+            padding-right: 37px;
+            padding-left: 10px;
+            font-size: 3rem;
+            align-content: center;
         }
 
         #table-stats {
@@ -238,6 +260,11 @@
             right: 10px;
         }
 
+        #specificDataContainer:hover, #specificDataContainer2:hover, #specificDataContainer3:hover, #specificDataContainer4:hover {
+            color: black;
+            background-color: #FFC317;
+        }
+
         #status-booth {
             background-color: #000000;
             color: white;
@@ -256,7 +283,7 @@
             font-size: 3rem;
             border-radius: 12px;
             padding: 20px;
-            margin-top: 20px;
+            margin-top: 50px;
             margin-bottom: 20px;
         }
 
@@ -274,6 +301,10 @@
             padding-top: 40px;
         }
 
+        #subtitle {
+            padding-bottom: 50px;
+        }
+
         #randomData {
             background-color: black;
             color: white;
@@ -284,18 +315,20 @@
             margin-top: 15px
         }
 
+        .chart-container {
+            padding-left: 100px;
+            width: 600px;
+            height: 400px;
+        }
+
     </style>
 </head>
 <body>
     <div class="dashboard">
         <div>
             <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
-            <h1>Welding Room Monitoring Dashboard</h1>
+            <h1 id="subtitle">Welding Room Monitoring Dashboard</h1>
             <div id="lastUpdate"></div>
-        </div>
-
-        <div class="card">
-            <h2>Current Metrics</h2>
         </div>
 
         <div class="booth-status">
@@ -378,8 +411,12 @@
 
         </div>
 
-        <h2>Data Trend</h2>
-        <canvas id="myChart"></canvas>
+        <div class="data-trend">
+            <h2 class="card">Data Trend</h2>
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
 
     </div>
 
@@ -506,43 +543,39 @@
             return total / count || 0;
         }
 
-        function createChart(tables) {
+        function createChart(choice1, choice2, choice3, choice4) {
             const ctx = document.getElementById('myChart').getContext('2d');
-            
             new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(row => row.date),
-                    datasets: [
-                        {
-                            label: 'Value 1',
-                            data: data.map(row => row.value1),
-                            borderColor: '#4a90e2',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Value 2',
-                            data: data.map(row => row.value2),
-                            borderColor: '#e27a4a',
-                            tension: 0.1
-                        }
-                    ]
+            type: 'bar',
+            data: {
+                labels: [`Booth ${tables[choice1].camera}`, `Booth ${tables[choice2].camera}`, `Booth ${tables[choice3].camera}`, `Booth ${tables[choice4].camera}`],
+                datasets: [{
+                    label: 'People Count',
+                    data: [320, 458, 210, 534],
+                    fill: false,
+                    backgroundColor: 'white',
+                    borderColor: '#000000',
+                    tension: 0.1
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                {
+                    label: 'Presence Change Total',
+                    data: [tables[choice1].presence_change_total, tables[choice2].presence_change_total, tables[choice3].presence_change_total, tables[choice4].presence_change_total],
+                    fill: false,
+                    backgroundColor: '#000000',
+                    borderColor: '#FFC317',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
+        });
         }
         
         function populateTable() {
@@ -622,6 +655,7 @@
                     displayData('randomData', random_data.substring(index_colon+2));
 
                     populateTable();
+                    createChart(4, 5, 2, 3);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
