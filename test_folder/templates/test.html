@@ -9,22 +9,28 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #5f5b5bfd;
+            background-color: #9fa1a2;
         }
 
         .dashboard {
-            max-width: 1400px;
+            max-width: 1700px;
             margin: auto;
             padding-bottom: 40px;
         }
 
+        .dashboard h1 {
+            color: white;
+            text-shadow: 0 2px 5px #000000;
+            text-align:center;
+        }
+
         .card {
-            background: #222;
+            background: #000000;
             color: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-            padding: 20px;
+            padding: 5px;
             transition: transform 0.3s ease;
         }
 
@@ -32,8 +38,26 @@
             transform: translateY(-5px);
         }
 
+        .card h1 {
+            text-align: center;
+        }
+
+        .booth-status {
+            background: #000000;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .booth-status:hover {
+            transform: translateY(-5px);
+        }
+
         .tables-container {
-            background: white;
+            background: #FFC317;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
@@ -103,7 +127,7 @@
         	display: flex;
             flex-direction: row;
             justify-content: space-between;
-            align-items: flex-start; /* Ensures they align at the top */
+            align-items: flex-start;
             gap: 20px;
     	}
 
@@ -111,13 +135,67 @@
             flex: 1;
         }
 
+        .middle-column {
+            background-color: #FFC317;
+            border-radius: 10px 10px 0 0;
+            height: 200px;
+        }
+
         .left-column, .right-column {
             background-color: #FFC317;
             color: black;
+            box-shadow: 0 5px 10px #000000;
             border-radius: 8px;
             text-align: center;
             padding-top: 20px;
-            height: 383px;
+            height: 491px;
+        }
+
+        .graph-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            height: 400px;
+        }
+
+        .table-container {
+            background: #FFC317;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            height: 400px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-scroll {
+            background-color: #FFC317;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        #table-stats {
+            margin-bottom: 50px;
         }
 
         #tableSelector {
@@ -143,12 +221,11 @@
 
 
         #specificDataContainer {
-            top: 40px;
+            
             color: #FFC317;
             background-color: black;
             margin: auto;
             text-align: center;
-
         }
 
         #specificDataContainer2 {
@@ -175,32 +252,50 @@
             right: 10px;
         }
 
-        #specificData, #specificData2, #specificData3, #specificData4 {
-            font-size: 1.5em;
-            font-weight: bold;
+        #status-booth {
+            background-color: #000000;
             color: white;
         }
 
+        #specificData, #specificData2, #specificData3, #specificData4 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin: 15px 0;
+        }
+
         #booth {
-            background-color: black;
+            background-color: #000000;
             color: #FFC317;
-            font-size: 50px;
-            border-radius: 0 10px 10px 0;
+            font-size: 3rem;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #booth-number {
+            font-size: 8rem;
+            color: #000000;
+            margin-top: 0px;
+            margin-bottom: 0px;
         }
 
         #label {
-            font-size: 25px;
-            margin-bottom: 0px;
+            font-size: 1.5rem;
+            color: #000000;
+            margin-top: 0px;
+            padding-top: 40px;
         }
 
         #randomData {
             background-color: black;
-            color: #ffffff;
-            justify-items: center;
-            max-width: 300px;
-            padding: 25px;
-            border-radius: 0 10px 10px 0;
-            font-size: 50px;
+            color: white;
+            font-size: 2.5rem;
+            padding: 20px;
+            max-width: 380px;
+            border-radius: 0px 10px 10px 0px;
+            margin-top: 15px
         }
 
         @media (max-width: 768px) {
@@ -216,7 +311,7 @@
 </head>
 <body>
     <div class="dashboard">
-        <div class="card">
+        <div>
             <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
             <h1>Welding Room Monitoring Dashboard</h1>
             <div id="lastUpdate"></div>
@@ -226,9 +321,9 @@
             <h2>Current Metrics</h2>
         </div>
 
-        <div class="card">
+        <div class="booth-status">
 
-            <h1>Booth Data Status</h1>
+            <h1>Full Booth Info</h1>
 
             <select id="tableSelector">
                 <option value="default">-- Select Here --</option>
@@ -252,7 +347,7 @@
 
             <button id="submitBtn">Submit</button>
         
-            <table>
+            <table id="table-stats">
                 <thead>
                 </thead>
                 <tbody id="metricsTableBody"></tbody>
@@ -260,42 +355,54 @@
         </div>
 
         <div class="side-columns">
-
-            <div class="left-column">
-                <h2>Data Trend</h2>
-                <canvas id="myChart"></canvas>
+            
+            <div id="left-column">
+                <div class="table-container">
+                    <h2>Status of Booths</h2>
+                    <table class="table-scroll">
+                        <thead id="tableHeader">
+                        </thead>
+                        <tbody id="status-booth"></tbody>
+                    </table>
+                </div>
             </div>
             
             <div class="middle-column">
+                <h1>Average Data for:</h1>
+
                 <div id="specificDataContainer" class="card">
-                    <h2>Average Data - People Presence</h2>
+                    <h2>People Presence</h2>
                     <p id="specificData"></p>
                 </div>
 
                 <div id="specificDataContainer2" class="card">
-                    <h2>Average Data - Frame Rate</h2>
+                    <h2>Frame Rate</h2>
                     <p id="specificData2"></p>
                 </div>
 
                 <div id="specificDataContainer3" class="card">
-                    <h2>Average Data - Presence Change Total</h2>
+                    <h2>Presence Change Total</h2>
                     <p id="specificData3"></p>
                 </div>
 
                 <div id="specificDataContainer4" class="card">
-                    <h2>Average Data - Presence Change Rate</h2>
+                    <h2>Presence Change Rate</h2>
                     <p id="specificData4"></p>
                 </div>
             </div>
             
 
             <div class="right-column">
-                <h1 id="booth" class="card"></h1>
+                <h1 id="booth" class="card">Booth</h1>
+                <h2 id="booth-number"></h2>
                 <h3 id="label"></h3>
                 <h5 id="randomData" class="card"></h5>
             </div>
 
         </div>
+
+        <h2>Data Trend</h2>
+        <canvas id="myChart"></canvas>
 
     </div>
 
@@ -318,7 +425,7 @@
         const table_chosen = document.getElementById("tableSelector");
         const submitBtn = document.getElementById("submitBtn");
         const tables = [];
-        let table_index = 0; sys = 0;
+        let table_amount = 0; sys = 0;
 
         function updateRandomData() {
             let data_chosen = 0;
@@ -376,7 +483,7 @@
                 return;
             }
 
-            const selectedTable = tables[choice];
+            let selectedTable = tables[choice];
             table_location.innerHTML = '';
         
             const table_row = `
@@ -421,7 +528,74 @@
             });
             return total / count || 0;
         }
+
+        function createChart(tables) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(row => row.date),
+                    datasets: [
+                        {
+                            label: 'Value 1',
+                            data: data.map(row => row.value1),
+                            borderColor: '#4a90e2',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Value 2',
+                            data: data.map(row => row.value2),
+                            borderColor: '#e27a4a',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
         
+        function populateTable() {
+            const tableBody = document.getElementById('status-booth');
+            tableBody.innerHTML = '';
+
+            let header = `
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Booth</th>
+                    <th>Status</th>
+                </tr>
+            `;
+            const tableHead = document.getElementById('tableHeader');
+            tableHead.innerHTML = header;
+
+            let selectedTable
+
+            for (let i = 0; i < table_amount; i++) {
+                selectedTable = tables[i];
+                let stats = `
+                    <tr>
+                        <td>${selectedTable.timestamp}</td>
+                        <td>${selectedTable.camera}</td>
+                        <td>${selectedTable.new_status}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += stats;
+            }
+        }
 
         function updateData() {
             fetch('/data')
@@ -450,6 +624,8 @@
                         console.log(tables[sys-1]);
                     }
 
+                    table_amount = tables.length;
+
                     submitBtn.addEventListener('click', () => {
                         const selectedValue = table_chosen.value;
                         tableDropdown(selectedValue);
@@ -464,9 +640,11 @@
 
                     let index_dash = random_data.indexOf('-');
                     let index_colon = random_data.indexOf(':');
-                    displayData('booth', random_data.substring(index_dash+2, index_colon));
+                    displayData('booth-number', random_data.substring(index_dash + 8, index_colon));
                     displayData('label', random_data.substring(0, index_dash-1));
                     displayData('randomData', random_data.substring(index_colon+2));
+
+                    populateTable();
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
