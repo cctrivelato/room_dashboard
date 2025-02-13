@@ -182,6 +182,26 @@
             background: #555;
         }
 
+        .data-trend {
+            background-color: #FFC317;
+            padding: 30px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .data-trend h2 {
+            background-color: #000000;
+            color: #FFC317;
+            border-radius: 10px;
+            padding-top: 100px;
+            padding-bottom: 20px;
+            padding-right: 37px;
+            padding-left: 10px;
+            font-size: 3rem;
+            align-content: center;
+        }
+
         #table-stats {
             margin-bottom: 50px;
         }
@@ -296,6 +316,7 @@
         }
 
         .chart-container {
+            padding-left: 100px;
             width: 600px;
             height: 400px;
         }
@@ -390,9 +411,11 @@
 
         </div>
 
-        <h2>Data Trend</h2>
-        <div class="chart-container">
-            <canvas id="myChart"></canvas>
+        <div class="data-trend">
+            <h2 class="card">Data Trend</h2>
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
         </div>
 
     </div>
@@ -528,15 +551,15 @@
                 labels: [`Booth ${tables[choice1].camera}`, `Booth ${tables[choice2].camera}`, `Booth ${tables[choice3].camera}`, `Booth ${tables[choice4].camera}`],
                 datasets: [{
                     label: 'People Count',
-                    data: [65, 59, 80, 81],
+                    data: [320, 458, 210, 534],
                     fill: false,
-                    backgroundColor: '#FFC317',
+                    backgroundColor: 'white',
                     borderColor: '#000000',
                     tension: 0.1
                 },
                 {
                     label: 'Presence Change Total',
-                    data: [40, 30, 55, 41],
+                    data: [tables[choice1].presence_change_total, tables[choice2].presence_change_total, tables[choice3].presence_change_total, tables[choice4].presence_change_total],
                     fill: false,
                     backgroundColor: '#000000',
                     borderColor: '#FFC317',
@@ -632,7 +655,7 @@
                     displayData('randomData', random_data.substring(index_colon+2));
 
                     populateTable();
-                    createChart(0, 1, 2, 3);
+                    createChart(4, 5, 2, 3);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
