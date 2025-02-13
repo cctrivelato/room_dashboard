@@ -56,20 +56,6 @@
             transform: translateY(-5px);
         }
 
-        .tables-container {
-            background: #FFC317;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
         .chart-container {
             height: 300px;
         }
@@ -221,9 +207,9 @@
 
 
         #specificDataContainer {
-            
             color: #FFC317;
             background-color: black;
+            border-bottom: 4px #FFC317;
             margin: auto;
             text-align: center;
         }
@@ -296,15 +282,6 @@
             max-width: 380px;
             border-radius: 0px 10px 10px 0px;
             margin-top: 15px
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            table {
-                font-size: 0.9em;
-            }
         }
 
     </style>
