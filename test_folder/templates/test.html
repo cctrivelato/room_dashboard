@@ -5,11 +5,40 @@
     <title>Welding Room Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
+        html,
+        html:before{
+            --s: 56px; /* control the size */
+            --g: 10px; /* control the gap */
+            --c: #FFC317; /* first color */
+            
+            --_l: #0000 calc(33% - .866*var(--g)),var(--c) calc(33.2% - .866*var(--g)) 33%,#0000 34%;
+            background:
+                repeating-linear-gradient(var(--c) 0 var(--g), #0000 0 50%)
+                0 calc(.866*var(--s) - var(--g)/2),
+                conic-gradient(from -150deg at var(--g) 50%,var(--c) 120deg,#0000 0),
+                linear-gradient(-120deg,var(--_l)),linear-gradient( -60deg,var(--_l))
+                #9fa1a2; /* second color */
+            background-size: var(--s) calc(3.466*var(--s));
+            animation: p infinite 2s linear;
+        }
+        
+        html:before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            animation-direction: reverse;
+        }
+        @keyframes p {
+            to {
+                background-position-x: calc(-1*var(--s));
+            }
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #9fa1a2;
         }
 
         .dashboard {
@@ -18,14 +47,21 @@
             padding-bottom: 40px;
         }
 
+        .initial-title {
+            background-color: #000000d3;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
         .dashboard h1 {
             color: white;
-            text-shadow: 0 2px 5px #000000;
+            text-shadow: 0 2px 5px #000000d2;
             text-align:center;
         }
 
         .card {
-            background: #000000;
+            background: #000000d2;
             color: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -43,7 +79,7 @@
         }
 
         .booth-status {
-            background: #000000;
+            background: #000000d3;
             color: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -54,6 +90,10 @@
 
         .booth-status:hover {
             transform: translateY(-5px);
+        }
+
+        .booth-status h1 {
+            color: white;
         }
 
         .chart-container {
@@ -122,16 +162,16 @@
         }
 
         .middle-column {
-            background-color: #FFC317;
+            background-color: #000000;
             border-radius: 10px 10px 0 0;
             height: 200px;
         }
 
         .right-column {
-            background-color: #FFC317;
+            background-color: #ffc117d3;
             color: black;
-            box-shadow: 0 5px 10px #000000;
-            border-radius: 8px;
+            box-shadow: 1px 1px 0px #000000;
+            border-radius: 0 0 8px 8px;
             text-align: center;
             padding-top: 20px;
             height: 571px;
@@ -146,8 +186,8 @@
         }
 
         .table-container {
-            background: #FFC317;
-            border-radius: 8px;
+            background: #ffc117d3;
+            border-radius: 0 0 8px 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
             height: 550px;
@@ -156,7 +196,6 @@
             overflow-y: auto;
             flex-direction: column;
             margin-bottom: 30px;
-            border: 1px solid #ddd;
         }
 
         .table-scroll {
@@ -183,23 +222,82 @@
         }
 
         .data-trend {
-            background-color: #FFC317;
+            background-color: #ffc117d3;
             padding: 30px;
             border-radius: 10px;
+            justify-content: center;
             display: flex;
             flex-direction: row;
+            margin-bottom: 30px;
         }
 
         .data-trend h2 {
             background-color: #000000;
             color: #FFC317;
-            border-radius: 10px;
+            border-radius: 0 0 10px 10px;
             padding-top: 100px;
             padding-bottom: 20px;
             padding-right: 37px;
             padding-left: 10px;
             font-size: 3rem;
             align-content: center;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: -250px; /* Hidden initially */
+            background-color: #000000;
+            padding-top: 30px;
+            transition: left 0.3s ease;
+            color: white;
+        }
+
+        .sidebar img {
+            padding-top: 190px;
+            padding-bottom: 70px;
+        }
+        
+        .sidebar a {
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+            padding-top: 35px;
+            padding-bottom: 35px;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .sidebar button {
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #9fa1a2;
+        }
+
+        /* Button to toggle sidebar */
+        #open-btn {
+            font-size: 20px;
+            cursor: pointer;
+            position: fixed;
+            top: 40px;
+            left: 0px;
+            background-color: white;
+            color: #000000;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
         }
 
         #table-stats {
@@ -229,40 +327,63 @@
 
 
         #specificDataContainer {
-            color: #FFC317;
-            background-color: black;
-            border-bottom: 4px #FFC317;
+            color: #000000;
+            background-color: #FFC317;
+            border-bottom: 4px #000000;
             margin: auto;
-            text-align: center;
+            border-radius: 8px 8px 0 0;
+            align-items: center;
+            justify-content: space-between;
+            display: flex;
+            flex-direction: row;
+            height: 110px;
         }
 
         #specificDataContainer2 {
-            color: #FFC317;
-            background-color: black;
+            color: #000000;
+            background-color: #FFC317;
+            border-bottom: 4px #000000;
             margin: auto;
-            text-align: center;
+            border-radius: 0px 0px 0 0;
+            align-items: center;
             left: 10px;
+            justify-content: space-between;
+            display: flex;
+            flex-direction: row;
+            height: 110px;
         }
 
         #specificDataContainer3 {
-            color: #FFC317;
-            background-color: black;
+            color: #000000;
+            background-color: #FFC317;
+            border-bottom: 4px #000000;
             margin: auto;
-            text-align: center;
+            border-radius: 0px 0px 0 0;
+            align-items: center;
             right: 10px;
+            justify-content: space-between;
+            display: flex;
+            flex-direction: row;
+            height: 110px;
         }
 
         #specificDataContainer4 {
-            color: #FFC317;
-            background-color: black;
+            color: #000000;
+            background-color: #FFC317;
+            border-bottom: 4px #000000;
             margin: auto;
-            text-align: center;
+            border-radius: 0 0 8px 8px;
+            align-items: center;
             right: 10px;
+            justify-content: space-between;
+            display: flex;
+            flex-direction: row;
+            height: 110px;
         }
 
         #specificDataContainer:hover, #specificDataContainer2:hover, #specificDataContainer3:hover, #specificDataContainer4:hover {
-            color: black;
-            background-color: #FFC317;
+            color: #FFC317;
+            background-color: #000000;
         }
 
         #status-booth {
@@ -305,6 +426,10 @@
             padding-bottom: 50px;
         }
 
+        #metricsTableBody {
+            background-color: #9fa1a2;
+        }
+
         #randomData {
             background-color: black;
             color: white;
@@ -315,17 +440,35 @@
             margin-top: 15px
         }
 
+        #myChart {
+            color: white;
+        }
+
         .chart-container {
             padding-left: 100px;
             width: 600px;
             height: 400px;
         }
 
+        
+
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
+        <span class="close-btn" onclick="toggleSidebar()">×</span>
+        <a href="/">Home</a>
+        <a href="">About</a>
+        <a href="#">Services</a>
+        <a href="#">Contact</a>
+        <!-- Button to open sidebar -->
+        <button id="open-btn" onclick="toggleSidebar()">☰ More</button>
+    </div>
+
     <div class="dashboard">
-        <div>
+        <div class="initial-title">
             <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
             <h1 id="subtitle">Welding Room Monitoring Dashboard</h1>
             <div id="lastUpdate"></div>
@@ -362,6 +505,13 @@
                 </thead>
                 <tbody id="metricsTableBody"></tbody>
             </table>
+        </div>
+
+        <div class="data-trend">
+            <h2 class="card">Data Trend</h2>
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
         </div>
 
         <div class="side-columns">
@@ -411,13 +561,6 @@
 
         </div>
 
-        <div class="data-trend">
-            <h2 class="card">Data Trend</h2>
-            <div class="chart-container">
-                <canvas id="myChart"></canvas>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -439,7 +582,7 @@
         const table_chosen = document.getElementById("tableSelector");
         const submitBtn = document.getElementById("submitBtn");
         const tables = [];
-        let table_amount = 0; sys = 0;
+        let table_amount = 0; sys = 0; myChart = 0;
 
         function updateRandomData() {
             let data_chosen = 0;
@@ -489,6 +632,23 @@
         function displayData(local, data){
             let location = document.getElementById(local);
             location.innerHTML = `${data}`;
+        }
+
+        function toggleSidebar() {
+            var open = document.getElementById("open-btn");
+            var sidebar = document.getElementById("mySidebar");
+
+            if (sidebar.style.left === "-250px") {
+                sidebar.style.left = "0";
+                open.style.left = "200px";
+                open.style.borderRadius = "8px";
+                open.innerHTML = '☰ Close';
+            } else {
+                sidebar.style.left = "-250px";
+                open.style.left = "0";
+                open.innerHTML = '☰ More'
+                open.style.borderRadius = "0 8px 8px 0";
+            }
         }
 
         function tableDropdown(choice){
@@ -544,38 +704,45 @@
         }
 
         function createChart(choice1, choice2, choice3, choice4) {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [`Booth ${tables[choice1].camera}`, `Booth ${tables[choice2].camera}`, `Booth ${tables[choice3].camera}`, `Booth ${tables[choice4].camera}`],
-                datasets: [{
-                    label: 'People Count',
-                    data: [320, 458, 210, 534],
-                    fill: false,
-                    backgroundColor: 'white',
-                    borderColor: '#000000',
-                    tension: 0.1
+            let getId = document.getElementById('myChart');
+
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            let ctx = document.getElementById('myChart').getContext('2d');
+            
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [`Booth ${tables[choice1].camera}`, `Booth ${tables[choice2].camera}`, `Booth ${tables[choice3].camera}`, `Booth ${tables[choice4].camera}`],
+                    datasets: [{
+                        label: 'Random Data',
+                        data: [(Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600))],
+                        fill: false,
+                        backgroundColor: 'white',
+                        borderColor: '#000000',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Presence Change Total',
+                        data: [tables[choice1].presence_change_total, tables[choice2].presence_change_total, tables[choice3].presence_change_total, tables[choice4].presence_change_total],
+                        fill: false,
+                        backgroundColor: '#000000',
+                        borderColor: '#FFC317',
+                        tension: 0.1
+                    }]
                 },
-                {
-                    label: 'Presence Change Total',
-                    data: [tables[choice1].presence_change_total, tables[choice2].presence_change_total, tables[choice3].presence_change_total, tables[choice4].presence_change_total],
-                    fill: false,
-                    backgroundColor: '#000000',
-                    borderColor: '#FFC317',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
         }
         
         function populateTable() {
@@ -586,7 +753,7 @@
                 <tr>
                     <th>Timestamp</th>
                     <th>Booth</th>
-                    <th>Status</th>
+                    <th>Live Status</th>
                 </tr>
             `;
             const tableHead = document.getElementById('tableHeader');
@@ -605,6 +772,10 @@
                 `;
                 tableBody.innerHTML += stats;
             }
+        }
+
+        function getRandom() {
+            return Math.floor(Math.random() * table_amount);
         }
 
         function updateData() {
@@ -655,7 +826,13 @@
                     displayData('randomData', random_data.substring(index_colon+2));
 
                     populateTable();
-                    createChart(4, 5, 2, 3);
+
+                    let chart = {};
+                    for(let i = 0; i < 4; i++){
+                        chart [i] = getRandom();
+                    }
+                    createChart(chart [0], chart[1], chart[2], chart[3]);
+                    console.log(chart [0], chart[1], chart[2], chart[3]);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
