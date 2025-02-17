@@ -42,9 +42,11 @@
         }
 
         .dashboard {
-            max-width: 1700px;
+            max-width: 2000px;
+            left: 400px;
             margin: auto;
             padding-bottom: 40px;
+            position: absolute;
         }
 
         .initial-title {
@@ -292,14 +294,6 @@
             border-radius: 0 5px 5px 0;
         }
 
-        .close-btn {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
         #table-stats {
             margin-bottom: 50px;
         }
@@ -458,11 +452,10 @@
     <!-- Sidebar -->
     <div id="mySidebar" class="sidebar">
         <img src="http://sfgrafana.sf.local/Full_Transparent_Background.png" alt="Grafana Image" style="width:100%; height:auto; top:100%">
-        <span class="close-btn" onclick="toggleSidebar()">×</span>
         <a href="/">Home</a>
-        <a href="">About</a>
-        <a href="#">Services</a>
-        <a href="#">Contact</a>
+        <a href="/">Specific Status 1</a>
+        <a href="/">Specific Status 2</a>
+        <a href="/">Specific Status 3</a>
         <!-- Button to open sidebar -->
         <button id="open-btn" onclick="toggleSidebar()">☰ More</button>
     </div>
@@ -635,15 +628,18 @@
         }
 
         function toggleSidebar() {
+            var body = document.querySelector('.dashboard');
             var open = document.getElementById("open-btn");
             var sidebar = document.getElementById("mySidebar");
 
             if (sidebar.style.left === "-250px") {
+                body.style.left = "500px";
                 sidebar.style.left = "0";
                 open.style.left = "200px";
                 open.style.borderRadius = "8px";
                 open.innerHTML = '☰ Close';
             } else {
+                body.style.left = "400px";
                 sidebar.style.left = "-250px";
                 open.style.left = "0";
                 open.innerHTML = '☰ More'
